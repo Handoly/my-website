@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 这行让手机端显示正常 -->
+    <title>邓万穿的个人主页</title>
+    
+    <!-- 🔗 关键点：引入外部的 CSS 文件 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- 🆕 新增：顶部导航栏 -->
+    <nav class="navbar">
+        <div class="logo">邓万穿</div>
+        <div class="menu">
+            <a href="#">首页</a>
+            <a href="https://github.com/handoly" target="_blank">我的GitHub</a>
+            <!-- 一个切换夜间模式的小按钮 -->
+            <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main>
+        <br><br><br> <!-- 给导航栏留点位置 -->
+        <h1>你好，我是邓万穿</h1>
+
+        <div class="profile-box">
+            <img src="https://picsum.photos/seed/d/200" alt="我的头像" class="avatar">
+        </div>
+        
+        <p>这是一个 HTML 初学者的练习作品。</p>
+        <p>我正在从零开始搭建我的个人天地。</p>
+
+        <!-- 卡片容器 -->
+        <div class="container">
+            <h3>🛠 我的技能 & 爱好</h3>
+            <ul>
+                <li>HTML / CSS / JavaScript</li>
+                <li>VS Code 使用高手</li>
+                <li>看电影 & 吃火锅</li>
+            </ul>
+
+            <hr>
+
+            <h3>📬 给我留言</h3>
+            <form onsubmit="fakeSubmit(); return false;">
+                <input type="text" placeholder="你的名字" required>
+                <textarea rows="3" placeholder="想说的话..."></textarea>
+                <button type="submit" class="btn btn-blue">发送</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 邓万穿 | Powered by VS Code</p>
+    </footer>
+
+    <!-- 🔗 关键点：引入外部的 JS 文件 -->
+    <script src="script.js"></script>
+
+</body>
+</html>
