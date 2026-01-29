@@ -24,3 +24,11 @@ function toggleTheme() {
         btn.innerHTML = "🌙"; // 变成月亮
     }
 }
+
+// --- 📱 手机端菜单切换功能 ---
+function toggleMenu() {
+    // 1. 找到菜单元素
+    var menu = document.getElementById("nav-menu");
+    // 2. 切换 active 类（有就删，无就加）
+    menu.classList.toggle("active");
+}

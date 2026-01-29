@@ -14,10 +14,15 @@
     <!-- 🆕 新增：顶部导航栏 -->
     <nav class="navbar">
         <div class="logo">邓万穿</div>
-        <div class="menu">
+        
+        <!-- 🆕 新增：汉堡按钮（默认隐藏，手机显示） -->
+        <!-- onclick="toggleMenu()" 表示点击它执行 JS 函数 -->
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+        <!-- 给菜单加个 id="nav-menu"，方便 JS 找到它 -->
+        <div class="menu" id="nav-menu">
             <a href="#">首页</a>
             <a href="https://github.com/handoly" target="_blank">我的GitHub</a>
-            <!-- 一个切换夜间模式的小按钮 -->
             <button id="theme-btn" onclick="toggleTheme()">🌙</button>
         </div>
     </nav>
