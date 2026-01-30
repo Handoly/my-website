@@ -101,3 +101,16 @@ async function deleteComment(id) {
 
 // ==================== 4. 启动 ====================
 window.onload = loadComments;
+
+// ==================== 5. 开启实时监听 ====================
+const channels = supabaseClient
+  .channel('public-comments') // 给频道起个名字
+  .on(
+    'postgres_changes', 
+    { event: 'INSERT', schema: 'public', table: 'comments' }, 
+    (payload) => {
+        console.log('检测到新留言！', payload);
+        loadComments(); // 只要有人插入数据，就自动运行刷新函数
+    }
+  )
+  .subscribe();
