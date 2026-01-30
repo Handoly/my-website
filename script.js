@@ -105,26 +105,20 @@ async function addComment() {
         return;
     }
 
-    // 立即记住名字到本地
+    // 存名字
     localStorage.setItem('saved_username', username);
 
-    // 异步获取位置信息
-    const location = await getUserLocation();
-
-    // 提交数据到 Supabase
+    // 提交到 Supabase (位置暂时留空)
     const { error } = await supabaseClient
         .from('comments')
         .insert([{ 
             username: username, 
             content: content, 
-            location: location 
+            location: "来自地球"  // 暂时给个酷酷的默认值
         }]);
 
-    if (error) {
-        alert("发送失败，请检查网络或配置");
-        console.error(error);
-    } else {
-        contentInput.value = ""; // 发送成功后仅清空留言内容
+    if (!error) {
+        contentInput.value = ""; 
     }
 }
 
@@ -233,59 +227,6 @@ async function loadComments() {
     }
 }
 
-// 提交留言：发往云端
-async function addComment() {
-    console.log("按钮被点到了！"); // 检查这个
-// 现在的写法：直接通过 ID 抓取，稳如老狗
-    var nameInput = document.getElementById("name-input");
-    var contentInput = document.getElementById("content-input");
-
-    if (!nameInput.value.trim() || !contentInput.value.trim()) {
-        alert("请输入名字和内容哦！");
-        return;
-    }
-
-    // --- 新增：获取 IP 属地 ---
-    let location = "未知";
-    try {
-        // 使用 Cloudflare 的 trace 接口，非常稳定
-        const response = await fetch('https://vispview.com/api/ip/geo'); // 这是一个常用的封装接口
-        // 或者使用这个更直接的：
-        const res = await fetch('https://ipapi.co/json/'); // 如果这个你觉得不稳定，换下面这个
-        
-        // 【备选方案】最稳定的国内可用接口：
-        const backupRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await backupRes.json();
-        
-        // 拿到 IP 后再查属地（推荐使用这个，对中文支持好）
-        const geoRes = await fetch(`https://whois.pconline.com.cn/ipJson.jsp?ip=${ipData.ip}&json=true`);
-        const geoData = await geoRes.json();
-        location = geoData.addr.trim().split(' ')[0]; // 只要省份城市，比如 "广东省广州市"
-    } catch (e) {
-        console.error("获取位置失败:", e);
-    }
-
-    const { error } = await supabaseClient
-        .from('comments')
-        .insert([{
-            username: nameInput.value,
-            content: contentInput.value,
-            location: location
-            }]); // 这里确认你的数据库表列名是 username 和 content
-
-    if (error) {
-        alert("发送失败，可能是数据库表没建好或 URL 填错啦！");
-        console.error(error);
-    } else {
-        // 只要发送成功，就记住这个名字
-        localStorage.setItem('saved_username', nameInput.value);
-        // nameInput.value = "";//发完后只清空内容框，不清空名字框，方便连发
-        contentInput.value = "";
-        // loadComments(); // 刷新显示//为了避免逻辑混乱，发送成功的代码里不要写 loadComments()，全部交给 .on 里面的回调函数处理。
-        console.log("云端同步成功！");
-    }
-}
-
 // 删除留言：在云端执行
 async function deleteComment(id) {
     const { error } = await supabaseClient
@@ -322,5 +263,14 @@ window.onload = async () => {
         }
     )
     .subscribe();
+
+    // --- 在所有逻辑执行完后，关闭加载遮罩 ---
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+        loader.style.opacity = '0'; // 先变透明
+        setTimeout(() => {
+            loader.style.display = 'none'; // 0.5秒后彻底隐藏，不挡住鼠标点击
+        }, 500);
+    }
 };
 

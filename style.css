@@ -265,3 +265,24 @@ body.dark-mode .delete-btn:hover {
     margin-top: 5px;
     text-align: right;
 }
+
+/* 让每条留言卡片出现时自带“duang”的效果 */
+.comment-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
