@@ -241,3 +241,27 @@ body.dark-mode .delete-btn:hover {
     background: #ff4d4d;
     color: white;
 }
+
+/* 留言头部的布局：名字和属地并排 */
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 属地标签的样式 */
+.location-tag {
+    font-size: 12px;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 底部时间的样式 */
+.comment-footer {
+    border-top: 1px dashed #eee;
+    padding-top: 5px;
+    margin-top: 5px;
+    text-align: right;
+}

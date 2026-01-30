@@ -5,22 +5,187 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 console.log("脚本加载成功！准备连接云端 🚀");
 
-// ==================== 2. 保留：你的原有 UI 功能 ====================
+// ==================== 2. UI 交互功能 (夜间模式与菜单) ====================
 
-// 切换夜间模式 (完美保留)
+// 切换夜间模式
 function toggleTheme() {
     var body = document.body;
     var btn = document.getElementById("theme-btn");
     body.classList.toggle("dark-mode");
-    btn.innerHTML = body.classList.contains("dark-mode") ? "☀️" : "🌙";
+    
+    // 记住用户的模式偏好
+    const isDark = body.classList.contains("dark-mode");
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    btn.innerHTML = isDark ? "☀️" : "🌙";
 }
 
-// 手机端菜单切换 (完美保留)
+// 手机端菜单切换
 function toggleMenu() {
     var menu = document.getElementById("nav-menu");
     menu.classList.toggle("active");
 }
 
+// ==================== 3. 页面加载初始化 ====================
+window.onload = async () => {
+    // A. 恢复之前的夜间模式设置
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add("dark-mode");
+        const btn = document.getElementById("theme-btn");
+        if(btn) btn.innerHTML = "☀️";
+    }
+
+    // B. 自动填充名字 (处理之前的 [object] 脏数据)
+    const savedName = localStorage.getItem('saved_username');
+    if (savedName && savedName !== "[object HTMLInputElement]") {
+        document.getElementById("name-input").value = savedName;
+    } else {
+        localStorage.removeItem('saved_username');
+    }
+
+    // C. 初次加载留言列表
+    await loadComments();
+
+    // D. 开启全自动化实时监听 (增/删/改都会触发刷新)
+    supabaseClient
+        .channel('public-comments')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, (payload) => {
+            console.log('检测到数据变动:', payload.eventType);
+            loadComments(); 
+        })
+        .subscribe();
+};
+
+// ==================== 4. 核心功能函数 ====================
+
+async function getUserLocation() {
+    // 1. 优先尝试 Cloudflare 的官方地理位置接口 (极度稳定，无频率限制)
+    try {
+        const response = await fetch('https://cloudflare.com/cdn-cgi/trace');
+        const text = await response.text();
+        
+        // 解析返回的文本 (Cloudflare 返回的是纯文本格式)
+        const data = text.split('\n').reduce((obj, line) => {
+            const [key, value] = line.split('=');
+            if (key) obj[key] = value;
+            return obj;
+        }, {});
+
+        // Cloudflare 返回的是国家代码（如 CN），我们将其转为更友好的文字
+        if (data.loc) {
+            return data.loc === 'CN' ? '中国' : data.loc;
+        }
+    } catch (e) {
+        console.warn("Cloudflare 接口获取失败，切换备用方案...");
+    }
+
+    // 2. 备用方案：使用国内非常稳定的搜狐 IP 接口 (支持中文，对国内用户极其友好)
+    try {
+        const res = await fetch('https://pv.sohu.com/cityjson?ie=utf-8');
+        const text = await res.text();
+        // 处理搜狐返回的 var returnCitySN = {...} 格式
+        const jsonStr = text.match(/\{.*\}/)[0];
+        const data = JSON.parse(jsonStr);
+        return data.cname || "未知"; // 返回如 "广东省广州市"
+    } catch (e) {
+        console.error("所有位置接口均失效:", e);
+        return "未知";
+    }
+}
+
+// 发送留言
+async function addComment() {
+    const nameInput = document.getElementById("name-input");
+    const contentInput = document.getElementById("content-input");
+    
+    const username = nameInput.value.trim();
+    const content = contentInput.value.trim();
+
+    if (!username || !content) {
+        alert("名字和内容都要写哦！");
+        return;
+    }
+
+    // 立即记住名字到本地
+    localStorage.setItem('saved_username', username);
+
+    // 异步获取位置信息
+    const location = await getUserLocation();
+
+    // 提交数据到 Supabase
+    const { error } = await supabaseClient
+        .from('comments')
+        .insert([{ 
+            username: username, 
+            content: content, 
+            location: location 
+        }]);
+
+    if (error) {
+        alert("发送失败，请检查网络或配置");
+        console.error(error);
+    } else {
+        contentInput.value = ""; // 发送成功后仅清空留言内容
+    }
+}
+
+// 拉取并渲染留言列表
+async function loadComments() {
+    const container = document.getElementById("comments-container");
+    
+    // 获取数据，按时间倒序排列（最新的在最上面）
+    const { data, error } = await supabaseClient
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('获取失败:', error);
+        return;
+    }
+
+    container.innerHTML = "";
+    if (data && data.length > 0) {
+        data.forEach(item => {
+            // 格式化时间为本地格式
+            const time = new Date(item.created_at).toLocaleString('zh-CN', { hour12: false });
+
+            const card = document.createElement("div");
+            card.className = "comment-card";
+            card.innerHTML = `
+                <button class="delete-btn" onclick="deleteComment('${item.id}')" title="删除留言">×</button>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                    <strong style="color: var(--text-color);">${item.username}</strong>
+                    <span style="font-size: 11px; color: #666; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">
+                        📍 ${item.location || '未知'}
+                    </span>
+                </div>
+                <p style="margin: 8px 0; line-height: 1.5;">${item.content}</p>
+                <div style="text-align: right;">
+                    <small style="color: #999; font-size: 11px;">${time}</small>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } else {
+        container.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">暂无留言，快来留下第一条吧！</p>';
+    }
+}
+
+// 删除留言
+async function deleteComment(id) {
+    if (!confirm("真的要删除这条留言吗？")) return;
+
+    const { error } = await supabaseClient
+        .from('comments')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert("删除失败：你可能需要检查 Supabase 的 RLS 权限是否已关闭");
+        console.error(error);
+    }
+    // 提示：此处无需手动执行 loadComments()，实时监听会自动同步删除效果
+}
 // ==================== 3. 升级：留言功能 (从本地 -> 云端) ====================
 
 // 页面加载时执行：从云端拉取
@@ -31,7 +196,7 @@ async function loadComments() {
     const { data, error } = await supabaseClient
         .from('comments')
         .select('*')
-        // .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }); // 💡 取消注释：让新留言置顶
 
     if (error) {
         console.error('获取失败:', error);
@@ -41,13 +206,25 @@ async function loadComments() {
     container.innerHTML = "";
     if (data && data.length > 0) {
         data.forEach(function(item) {
+            // 💡 格式化时间：转为“2023/10/24 14:30:00”这种格式
+            const time = new Date(item.created_at).toLocaleString('zh-CN', {
+                hour12: false
+            });
+
             var card = document.createElement("div");
             card.className = "comment-card";
-            // 这里用 item.id 作为删除标识
+            
+            // 💡 这里加入了 📍属地 和 🕒时间 的展示
             card.innerHTML = `
                 <button class="delete-btn" onclick="deleteComment('${item.id}')">×</button>
-                <strong>${item.username}</strong> 
-                <p style="margin-top: 5px;">${item.content}</p>
+                <div class="comment-header">
+                    <strong>${item.username}</strong>
+                    <span class="location-tag">📍 ${item.location || '未知'}</span>
+                </div>
+                <p style="margin-top: 8px; margin-bottom: 8px;">${item.content}</p>
+                <div class="comment-footer">
+                    <small style="color: #999;">${time}</small>
+                </div>
             `;
             container.appendChild(card);
         });
@@ -68,17 +245,43 @@ async function addComment() {
         return;
     }
 
+    // --- 新增：获取 IP 属地 ---
+    let location = "未知";
+    try {
+        // 使用 Cloudflare 的 trace 接口，非常稳定
+        const response = await fetch('https://vispview.com/api/ip/geo'); // 这是一个常用的封装接口
+        // 或者使用这个更直接的：
+        const res = await fetch('https://ipapi.co/json/'); // 如果这个你觉得不稳定，换下面这个
+        
+        // 【备选方案】最稳定的国内可用接口：
+        const backupRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await backupRes.json();
+        
+        // 拿到 IP 后再查属地（推荐使用这个，对中文支持好）
+        const geoRes = await fetch(`https://whois.pconline.com.cn/ipJson.jsp?ip=${ipData.ip}&json=true`);
+        const geoData = await geoRes.json();
+        location = geoData.addr.trim().split(' ')[0]; // 只要省份城市，比如 "广东省广州市"
+    } catch (e) {
+        console.error("获取位置失败:", e);
+    }
+
     const { error } = await supabaseClient
         .from('comments')
-        .insert([{ username: nameInput.value, content: contentInput.value }]); // 这里确认你的数据库表列名是 username 和 content
+        .insert([{
+            username: nameInput.value,
+            content: contentInput.value,
+            location: location
+            }]); // 这里确认你的数据库表列名是 username 和 content
 
     if (error) {
         alert("发送失败，可能是数据库表没建好或 URL 填错啦！");
         console.error(error);
     } else {
-        nameInput.value = "";
+        // 只要发送成功，就记住这个名字
+        localStorage.setItem('saved_username', nameInput.value);
+        // nameInput.value = "";//发完后只清空内容框，不清空名字框，方便连发
         contentInput.value = "";
-        loadComments(); // 刷新显示
+        // loadComments(); // 刷新显示//为了避免逻辑混乱，发送成功的代码里不要写 loadComments()，全部交给 .on 里面的回调函数处理。
         console.log("云端同步成功！");
     }
 }
@@ -96,17 +299,28 @@ async function deleteComment(id) {
 }
 
 // ==================== 4. 启动 ====================
-window.onload = loadComments;
-
-// ==================== 5. 开启实时监听 ====================
-const channels = supabaseClient
-  .channel('public-comments') // 给频道起个名字
-  .on( 
-    'postgres_changes', 
-    { event: 'INSERT', schema: 'public', table: 'comments' }, 
-    (payload) => {
-        console.log('检测到新留言！', payload);
-        loadComments(); // 只要有人插入数据，就自动运行刷新函数
+window.onload = async () => {
+    // 1. 尝试从浏览器本地读取名字
+    const savedName = localStorage.getItem('saved_username');
+    if (savedName) {
+        document.getElementById("name-input").value = savedName;
     }
-  )
-  .subscribe();
+
+    // 2. 加载原有的留言列表和实时监听
+    await loadComments();
+    // ... 你的实时监听代码 ...
+
+    // ==================== 5. 开启实时监听 ====================
+    const channels = supabaseClient
+    .channel('public-comments') // 给频道起个名字
+    .on( 
+        'postgres_changes', 
+        { event: '*', schema: 'public', table: 'comments' }, 
+        (payload) => {
+            console.log('检测到新留言！', payload);
+            loadComments(); // 只要有人插入数据，就自动运行刷新函数
+        }
+    )
+    .subscribe();
+};
+
