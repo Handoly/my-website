@@ -105,7 +105,7 @@ window.onload = loadComments;
 // ==================== 5. 开启实时监听 ====================
 const channels = supabaseClient
   .channel('public-comments') // 给频道起个名字
-  .on(
+  .on( 
     'postgres_changes', 
     { event: 'INSERT', schema: 'public', table: 'comments' }, 
     (payload) => {
