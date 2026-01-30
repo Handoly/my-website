@@ -175,3 +175,30 @@ body.dark-mode textarea {
         background-color: #333;
     }
 }
+
+/* 留言区域的样式 */
+.comment-section {
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.comment-card {
+    background: #f9f9f9;
+    border-left: 5px solid #008CBA;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.comment-card strong {
+    display: block;
+    color: #008CBA;
+    margin-bottom: 5px;
+}
+
+/* 夜间模式适配 */
+body.dark-mode .comment-card {
+    background: #444;
+    color: #eee;
+}
