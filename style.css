@@ -202,3 +202,42 @@ body.dark-mode .comment-card {
     background: #444;
     color: #eee;
 }
+
+.delete-btn {
+    float: right;
+    background: #ffeded;   /* 淡淡的红背景 */
+    color: #ff4d4d;        /* 亮红色 */
+    border: 1px solid #ffcccc;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s; /* 动画过渡 */
+}
+
+.delete-btn:hover {
+    background: #ff4d4d;   /* 鼠标放上去变全红 */
+    color: white;
+}
+
+.comment-card {
+    overflow: hidden; /* ✨ 新增：防止内部浮动元素（删除按钮）撑破外壳 */
+    position: relative; /* 为以后更高级的定位做准备 */
+}
+
+#name-input:focus, #content-input:focus {
+    outline: none;
+    border-color: #008CBA;
+    box-shadow: 0 0 5px rgba(0, 140, 186, 0.3);
+}
+
+body.dark-mode .delete-btn {
+    background: #553333; /* 深红色背景 */
+    color: #ff9999;      /* 浅红色文字 */
+    border-color: #774444;
+}
+
+body.dark-mode .delete-btn:hover {
+    background: #ff4d4d;
+    color: white;
+}

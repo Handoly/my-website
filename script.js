@@ -1,101 +1,103 @@
-// 控制台打印一句话，证明 JS 连接成功
-console.log("脚本加载成功！准备起飞 🚀");
+// ==================== 1. 云端配置 (Supabase) ====================
+const SUPABASE_URL = 'https://hatfniprpjrjwzmximna.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_jFyW8ThJemLJHIbzIK085Q_cxmOnNxG';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 模拟表单提交
-function fakeSubmit() {
-    // 1. 拿到 HTML 里的输入元素
-    var nameInput = document.querySelector('input[placeholder="你的名字"]');
-    var textInput = document.querySelector('textarea[placeholder="想说的话..."]');
+console.log("脚本加载成功！准备连接云端 🚀");
+
+// ==================== 2. 保留：你的原有 UI 功能 ====================
+
+// 切换夜间模式 (完美保留)
+function toggleTheme() {
+    var body = document.body;
+    var btn = document.getElementById("theme-btn");
+    body.classList.toggle("dark-mode");
+    btn.innerHTML = body.classList.contains("dark-mode") ? "☀️" : "🌙";
+}
+
+// 手机端菜单切换 (完美保留)
+function toggleMenu() {
+    var menu = document.getElementById("nav-menu");
+    menu.classList.toggle("active");
+}
+
+// ==================== 3. 升级：留言功能 (从本地 -> 云端) ====================
+
+// 页面加载时执行：从云端拉取
+async function loadComments() {
     var container = document.getElementById("comments-container");
+    
+    // 向云端要数据
+    const { data, error } = await supabaseClient
+        .from('comments')
+        .select('*')
+        // .order('created_at', { ascending: false });
 
-    // 2. 检查是否有内容
-    if (nameInput.value.trim() === "" || textInput.value.trim() === "") {
+    if (error) {
+        console.error('获取失败:', error);
+        return;
+    }
+
+    container.innerHTML = "";
+    if (data && data.length > 0) {
+        data.forEach(function(item) {
+            var card = document.createElement("div");
+            card.className = "comment-card";
+            // 这里用 item.id 作为删除标识
+            card.innerHTML = `
+                <button class="delete-btn" onclick="deleteComment('${item.id}')">×</button>
+                <strong>${item.username}</strong> 
+                <p style="margin-top: 5px;">${item.content}</p>
+            `;
+            container.appendChild(card);
+        });
+    } else {
+        container.innerHTML = '<p style="color: #888;">暂无留言，快来抢沙发！</p>';
+    }
+}
+
+// 提交留言：发往云端
+async function addComment() {
+    console.log("按钮被点到了！"); // 检查这个
+// 现在的写法：直接通过 ID 抓取，稳如老狗
+    var nameInput = document.getElementById("name-input");
+    var contentInput = document.getElementById("content-input");
+
+    if (!nameInput.value.trim() || !contentInput.value.trim()) {
         alert("请输入名字和内容哦！");
         return;
     }
 
-    // 3. 如果是第一条留言，清空“暂无留言”的文字
-    if (container.innerHTML.includes("暂无留言")) {
-        container.innerHTML = "";
-    }
+    const { error } = await supabaseClient
+        .from('comments')
+        .insert([{ username: nameInput.value, content: contentInput.value }]); // 这里确认你的数据库表列名是 username 和 content
 
-    // 4. 创建一个新的留言卡片 (Div)
-    var newComment = document.createElement("div");
-    newComment.className = "comment-card";
-    
-    // 5. 设置卡片内容
-    newComment.innerHTML = "<strong>" + nameInput.value + " 说：</strong>" + textInput.value;
-
-    // 6. 把卡片放到容器的最前面
-    container.insertBefore(newComment, container.firstChild);
-
-    // --- 新增：保存到本地 ---
-    saveCommentLocal(nameInput.value, textInput.value);
-
-    // 7. 清空输入框，方便下次输入
-    nameInput.value = "";
-    textInput.value = "";
-
-    console.log("成功添加了一条新留言！");
-}
-
-// 切换夜间模式
-function toggleTheme() {
-    // 1. 获取 body 元素
-    var body = document.body;
-    // 2. 获取按钮元素
-    var btn = document.getElementById("theme-btn");
-
-    // 3. 切换类名：如果有 'dark-mode' 就删掉，没有就加上
-    // classList.toggle 是个非常好用的开关方法
-    body.classList.toggle("dark-mode");
-
-    // 4. 根据当前状态修改按钮图标
-    if (body.classList.contains("dark-mode")) {
-        btn.innerHTML = "☀️"; // 变成太阳
+    if (error) {
+        alert("发送失败，可能是数据库表没建好或 URL 填错啦！");
+        console.error(error);
     } else {
-        btn.innerHTML = "🌙"; // 变成月亮
+        nameInput.value = "";
+        contentInput.value = "";
+        loadComments(); // 刷新显示
+        console.log("云端同步成功！");
     }
 }
 
-// --- 📱 手机端菜单切换功能 ---
-function toggleMenu() {
-    // 1. 找到菜单元素
-    var menu = document.getElementById("nav-menu");
-    // 2. 切换 active 类（有就删，无就加）
-    menu.classList.toggle("active");
-}
+// 删除留言：在云端执行
+async function deleteComment(id) {
+    if (!confirm("确定要删除这条公共留言吗？")) return;
 
-// 函数 A：负责把留言存进“小抽屉”
-function saveCommentLocal(name, text) {
-    // 1. 先从抽屉里拿出以前的留言，如果没有，就准备个空数组 []
-    var oldComments = JSON.parse(localStorage.getItem("myComments") || "[]");
-    
-    // 2. 把新留言包成一个“小对象”
-    var newEntry = { name: name, content: text };
-    
-    // 3. 塞进数组的最前面
-    oldComments.unshift(newEntry);
-    
-    // 4. 把更新后的数组放回抽屉（必须转成字符串才能存）
-    localStorage.setItem("myComments", JSON.stringify(oldComments));
-}
+    const { error } = await supabaseClient
+        .from('comments')
+        .delete()
+        .eq('id', id);
 
-// 函数 B：页面一打开，就把抽屉里的留言全部拿出来显示
-function loadComments() {
-    var container = document.getElementById("comments-container");
-    var oldComments = JSON.parse(localStorage.getItem("myComments") || "[]");
-
-    if (oldComments.length > 0) {
-        container.innerHTML = ""; // 清空“暂无留言”
-        oldComments.forEach(function(item) {
-            var card = document.createElement("div");
-            card.className = "comment-card";
-            card.innerHTML = "<strong>" + item.name + " 说：</strong>" + item.content;
-            container.appendChild(card);
-        });
+    if (error) {
+        alert("删除失败，你可能需要关闭 RLS 权限。");
+    } else {
+        loadComments();
     }
 }
 
-// --- 关键：这行代码让网页一加载就执行读取操作 ---
+// ==================== 4. 启动 ====================
 window.onload = loadComments;

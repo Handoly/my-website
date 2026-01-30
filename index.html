@@ -7,6 +7,7 @@
     
     <!-- 🔗 关键点：引入外部的 CSS 文件 -->
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -51,9 +52,11 @@
             <hr>
 
             <h3>📬 给我留言</h3>
-            <form onsubmit="fakeSubmit(); return false;">
-                <input type="text" placeholder="你的名字" required>
-                <textarea rows="3" placeholder="想说的话..."></textarea>
+            <form onsubmit="addComment(); return false;">
+                <input type="text" id="name-input" placeholder="你的名字" required>
+                
+                <textarea id="content-input" rows="3" placeholder="想说的话..."></textarea>
+                
                 <button type="submit" class="btn btn-blue">发送</button>
             </form>
 
