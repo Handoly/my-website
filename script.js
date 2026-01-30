@@ -96,29 +96,48 @@ async function getUserLocation() {
 async function addComment() {
     const nameInput = document.getElementById("name-input");
     const contentInput = document.getElementById("content-input");
-    
+
     const username = nameInput.value.trim();
     const content = contentInput.value.trim();
+
+    // 找到表单里的提交按钮
+    const submitBtn = document.querySelector('button[type="submit"]');
 
     if (!username || !content) {
         alert("名字和内容都要写哦！");
         return;
     }
 
-    // 存名字
-    localStorage.setItem('saved_username', username);
+    // --- 💡 进阶：开启“提交锁” ---
+    submitBtn.disabled = true;          // 禁用按钮，防止连点
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "正在发送..."; // 改变文字提示
 
-    // 提交到 Supabase (位置暂时留空)
-    const { error } = await supabaseClient
-        .from('comments')
-        .insert([{ 
-            username: username, 
-            content: content, 
-            location: "来自地球"  // 暂时给个酷酷的默认值
-        }]);
+    try {
+        // 存名字到本地
+        localStorage.setItem('saved_username', username);
 
-    if (!error) {
-        contentInput.value = ""; 
+        // 提交到 Supabase
+        const { error } = await supabaseClient
+            .from('comments')
+            .insert([{ 
+                username: username, 
+                content: content, 
+                location: "来自地球" 
+            }]);
+
+        if (error) {
+            alert("发送失败，请稍后重试");
+            console.error(error);
+        } else {
+            contentInput.value = ""; // 只有成功了才清空输入框
+        }
+    } catch (err) {
+        console.error("网络异常:", err);
+    } finally {
+        // --- 💡 进阶：无论成功还是失败，最后都要解锁按钮 ---
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
     }
 }
 
@@ -272,5 +291,28 @@ window.onload = async () => {
             loader.style.display = 'none'; // 0.5秒后彻底隐藏，不挡住鼠标点击
         }, 500);
     }
+
+    // 监听用户的第一次点击，尝试播放音乐
+    document.addEventListener('click', function() {
+        const audio = document.getElementById('bg-audio');
+        // 只有当音乐没在响，且没被手动暂停过时才尝试播放
+        if (audio.paused) {
+            audio.play().catch(e => console.log("等待用户交互后播放"));
+        }
+    }, { once: true }); // once: true 保证这个监听只执行一次
 };
 
+function toggleMusic() {
+    const audio = document.getElementById('bg-audio');
+    const btn = document.getElementById('music-btn');
+
+    if (audio.paused) {
+        audio.play();
+        btn.innerHTML = "🎶"; // 播放时的图标
+        btn.classList.add('rotating'); // 让按钮转起来
+    } else {
+        audio.pause();
+        btn.innerHTML = "🎵"; // 暂停时的图标
+        btn.classList.remove('rotating');
+    }
+}

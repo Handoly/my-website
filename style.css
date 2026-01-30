@@ -286,3 +286,26 @@ body.dark-mode .delete-btn:hover {
             0% { transform: rotate(0deg); } 
             100% { transform: rotate(360deg); } 
         }
+
+/* 当按钮被禁用时的样式 */
+button:disabled {
+    background-color: #a5a5a5 !important; /* 变成灰色 */
+    cursor: not-allowed;                  /* 鼠标变成禁止图标 */
+    opacity: 0.7;
+}
+
+
+/* 旋转动画 */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotating {
+    animation: rotate 3s linear infinite;
+}
+
+/* 让按钮在点击时有反馈 */
+#music-btn:active {
+    transform: scale(0.9);
+}
