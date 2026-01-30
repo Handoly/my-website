@@ -85,17 +85,13 @@ async function addComment() {
 
 // 删除留言：在云端执行
 async function deleteComment(id) {
-    if (!confirm("确定要删除这条公共留言吗？")) return;
-
     const { error } = await supabaseClient
         .from('comments')
         .delete()
-        .eq('id', id);
+        .eq('id', id); // 确保这里用的是 id 字段
 
     if (error) {
-        alert("删除失败，你可能需要关闭 RLS 权限。");
-    } else {
-        loadComments();
+        alert("删除失败：" + error.message);
     }
 }
 
