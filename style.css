@@ -11,7 +11,7 @@
     --tag-text: #666;
     --footer-line: #eee;
     --shadow: 0 5px 15px rgba(0,0,0,0.05);
-    --thought-orange: #ff9800; /* 专门给你的私密模块用的橙色 */
+    --thought-orange: #ff9800;
 }
 
 body.dark-mode {
@@ -28,7 +28,7 @@ body.dark-mode {
     --shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
 
-/* ==================== 2. 全局与加载页 ==================== */
+/* ==================== 2. 全局基础样式 ==================== */
 body {
     margin: 0; padding: 0;
     font-family: "微软雅黑", sans-serif;
@@ -68,7 +68,7 @@ body {
     padding: 0 20px; box-sizing: border-box; z-index: 1000;
 }
 
-.nav-spacer { height: 80px; } /* 替代原有的 <br> */
+.nav-spacer { height: 80px; }
 
 .logo { font-size: 20px; font-weight: bold; color: var(--primary-color); }
 
@@ -86,33 +86,20 @@ body {
     border-radius: 10px; text-align: left; box-shadow: var(--shadow);
 }
 
-/* ==================== 4. 霓虹头像 ==================== */
+/* ==================== 4. 头像样式 (恢复正常) ==================== */
 .profile-box { display: inline-block; position: relative; padding: 10px; }
 .avatar {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
+    width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
     border: 3px solid var(--primary-color);
     box-shadow: 0 0 15px var(--primary-color);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-
-    /* 🚀 关键：修复手机端点击轮廓和延迟 */
-    -webkit-tap-highlight-color: transparent; /* 去掉你看到的矩形高亮框 */
-    touch-action: manipulation;              /* 禁用双击缩放，大幅提升点击灵敏度 */
-    -webkit-user-select: none;               /* 防止长按弹出选择文字菜单 */
-    user-select: none;
-    -webkit-touch-callout: none; /* 🚀 关键：禁止手机长按图片弹出保存菜单 */
-    pointer-events: auto;        /* 确保它是可以被点击的 */
+    transition: all 0.5s ease;
 }
 .avatar:hover {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
-    filter: brightness(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--primary-color);
 }
 
-/* ==================== 5. 留言板滚动美化 ==================== */
+/* ==================== 5. 留言板样式 ==================== */
 #comments-container {
     max-height: 400px; overflow-y: scroll; padding-right: 8px;
 }
@@ -120,7 +107,17 @@ body {
 #comments-container::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 10px; }
 #comments-container::-webkit-scrollbar-track { background: var(--tag-bg); border-radius: 10px; }
 
-.empty-hint { color: #888; text-align: center; }
+.comment-card {
+    background: var(--card-bg); border-left: 5px solid var(--primary-color);
+    padding: 12px; margin-bottom: 12px; border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.comment-header strong { color: var(--primary-color); }
+.location-tag { font-size: 11px; color: var(--tag-text); background-color: var(--tag-bg); padding: 2px 6px; border-radius: 4px; }
+.comment-footer { border-top: 1px dashed var(--footer-line); padding-top: 5px; margin-top: 8px; text-align: right; color: #999; }
+.delete-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; }
 
 /* ==================== 6. 表单与按钮 ==================== */
 input, textarea {
@@ -136,38 +133,25 @@ input:focus, textarea:focus { outline: none; border-color: var(--primary-color);
 }
 button:disabled { background-color: #a5a5a5 !important; cursor: not-allowed; opacity: 0.7; }
 
-/* ==================== 7. 私密想法专有样式 ==================== */
+/* ==================== 7. 私密想法样式 (解锁后) ==================== */
 .thought-container {
-    display: none; 
+    display: none; /* 初始隐藏 */
     border-top: 5px solid var(--thought-orange);
 }
-.btn-thought {
-    background-color: var(--thought-orange);
-}
-#thoughts-container {
-    margin-top: 15px;
-}
-/* 每一条想法的样式卡片 */
+.btn-thought { background-color: var(--thought-orange); margin-top: 10px; }
+
 .thought-item {
-    font-size: 14px; padding: 10px; 
-    background: #fff8e1; border-radius: 5px; 
-    margin-bottom: 8px; color: #5d4037;
+    font-size: 14px; padding: 12px; 
+    background: #fff8e1; border-radius: 8px; 
+    margin-bottom: 10px; color: #5d4037;
+    border-left: 4px solid var(--thought-orange);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+body.dark-mode .thought-item {
+    background: #333; color: #ffe0b2;
 }
 
-/* ==================== 8. 留言卡片与动画 ==================== */
-.comment-card {
-    background: var(--card-bg); border-left: 5px solid var(--primary-color);
-    padding: 12px; margin-bottom: 12px; border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
-    animation: slideIn 0.3s ease-out;
-}
-.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-.comment-header strong { color: var(--primary-color); }
-.location-tag { font-size: 11px; color: var(--tag-text); background-color: var(--tag-bg); padding: 2px 6px; border-radius: 4px; }
-.comment-footer { border-top: 1px dashed var(--footer-line); padding-top: 5px; margin-top: 8px; text-align: right; color: #999; }
-.delete-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; }
-
-/* 响应式 */
+/* ==================== 8. 响应式与动画 ==================== */
 .hamburger { display: none; font-size: 24px; cursor: pointer; }
 @media (max-width: 768px) {
     .hamburger { display: block; }
@@ -179,6 +163,5 @@ button:disabled { background-color: #a5a5a5 !important; cursor: not-allowed; opa
     .menu.active { display: flex; }
     .menu a { margin: 10px 0; display: block; font-size: 18px; }
 }
-
 @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } 
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
