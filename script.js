@@ -147,17 +147,25 @@ window.onload = async () => {
     const savedName = localStorage.getItem('saved_username');
     if (savedName) document.getElementById("name-input").value = savedName;
 
-    // 🚀 重新绑定头像点击 (修复版)
+    // 🚀 手机端极致灵敏版绑定
     const avatar = document.querySelector('.avatar');
     if (avatar) {
-        // 手机端和电脑端通用监听
-        avatar.addEventListener('click', function(e) {
-            clickCount++;
+        // 定义一个统一的处理器
+        const handleSecretClick = (e) => {
+            // 阻止系统可能存在的默认干扰
+            if (e.cancelable) e.preventDefault(); 
             
-            // 调试用：如果你手机连着电脑，或者用控制台，能看到数字
-            console.log("点击次数:", clickCount);
+            clickCount++;
+            console.log("触碰次数:", clickCount);
 
-            if (clickCount === 5) {
+            // 只要开始点，就重置 2 秒计时器
+            clearTimeout(window.clickTimer);
+            window.clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 2000);
+
+            if (clickCount === 2) {
+                clickCount = 0; // 弹窗前先重置，防止重复触发
                 const password = prompt("请输入暗号：");
                 if (password === "admin") {
                     const section = document.getElementById('thought-section');
@@ -166,15 +174,20 @@ window.onload = async () => {
                     section.scrollIntoView({ behavior: 'smooth' });
                     alert("欢迎回来，邓大神！");
                 }
-                clickCount = 0;
             }
+        };
 
-            // 💡 超过 2 秒没点完就重置计数
-            clearTimeout(window.clickTimer);
-            window.clickTimer = setTimeout(() => {
-                clickCount = 0;
-            }, 2000);
+        // 同时监听两种事件，确保万无一失
+        // 'touchend' 是手机端最灵敏的反馈
+        avatar.addEventListener('touchend', handleSecretClick, { passive: false });
+        // 'click' 留给电脑端
+        avatar.addEventListener('click', (e) => {
+            // 如果是手机已经触发过 touchend 了，click 就不再执行
+            if (window.isTouched) return;
+            handleSecretClick(e);
         });
+        
+        avatar.addEventListener('touchstart', () => { window.isTouched = true; });
     }
     
     // 加载数据

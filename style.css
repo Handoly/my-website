@@ -103,6 +103,8 @@ body {
     touch-action: manipulation;              /* 禁用双击缩放，大幅提升点击灵敏度 */
     -webkit-user-select: none;               /* 防止长按弹出选择文字菜单 */
     user-select: none;
+    -webkit-touch-callout: none; /* 🚀 关键：禁止手机长按图片弹出保存菜单 */
+    pointer-events: auto;        /* 确保它是可以被点击的 */
 }
 .avatar:hover {
     transform: scale(1.1) rotate(5deg);
