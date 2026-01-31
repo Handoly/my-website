@@ -89,14 +89,20 @@ body {
 /* ==================== 4. 霓虹头像 ==================== */
 .profile-box { display: inline-block; position: relative; padding: 10px; }
 .avatar {
-    width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
     border: 3px solid var(--primary-color);
     box-shadow: 0 0 15px var(--primary-color);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
-    -webkit-user-select: none; /* 禁止选中图片 */
-    -webkit-touch-callout: none; /* 禁止手机长按弹出菜单 */
-    touch-action: manipulation; /* 🚀 关键：告诉浏览器这个元素不需要等待双击确认，直接触发点击 */
+
+    /* 🚀 关键：修复手机端点击轮廓和延迟 */
+    -webkit-tap-highlight-color: transparent; /* 去掉你看到的矩形高亮框 */
+    touch-action: manipulation;              /* 禁用双击缩放，大幅提升点击灵敏度 */
+    -webkit-user-select: none;               /* 防止长按弹出选择文字菜单 */
+    user-select: none;
 }
 .avatar:hover {
     transform: scale(1.1) rotate(5deg);

@@ -147,16 +147,15 @@ window.onload = async () => {
     const savedName = localStorage.getItem('saved_username');
     if (savedName) document.getElementById("name-input").value = savedName;
 
-    // 🚀 核心修复：为头像添加点击计数
+    // 🚀 重新绑定头像点击 (修复版)
     const avatar = document.querySelector('.avatar');
     if (avatar) {
-        // 使用 touchend (手机端触发更快) 或者 onclick
-        avatar.addEventListener('click', (e) => {
-            // 阻止系统默认的连击缩放
-            // e.preventDefault(); 
-            
+        // 手机端和电脑端通用监听
+        avatar.addEventListener('click', function(e) {
             clickCount++;
-            console.log("当前点击次数:", clickCount); // 你可以在手机浏览器开发者工具看日志
+            
+            // 调试用：如果你手机连着电脑，或者用控制台，能看到数字
+            console.log("点击次数:", clickCount);
 
             if (clickCount === 5) {
                 const password = prompt("请输入暗号：");
@@ -167,14 +166,14 @@ window.onload = async () => {
                     section.scrollIntoView({ behavior: 'smooth' });
                     alert("欢迎回来，邓大神！");
                 }
-                clickCount = 0; 
+                clickCount = 0;
             }
 
-            // 💡 大神逻辑：如果 3 秒内没点完 5 次，就重置计数（防止误操作累加）
+            // 💡 超过 2 秒没点完就重置计数
             clearTimeout(window.clickTimer);
             window.clickTimer = setTimeout(() => {
                 clickCount = 0;
-            }, 3000);
+            }, 2000);
         });
     }
     
