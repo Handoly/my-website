@@ -5,4 +5,4 @@ FROM nginx:alpine
 COPY . /usr/share/nginx/html/
 
 # 暴露 80 端口（网页标准端口）
-EXPOSE 80
+EXPOSE 80 

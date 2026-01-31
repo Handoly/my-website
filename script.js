@@ -160,7 +160,7 @@ window.onload = async () => {
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add("dark-mode");
         document.getElementById("theme-btn").innerHTML = "☀️";
-    }
+    } 
 
     // 恢复用户名
     const savedName = localStorage.getItem('saved_username');
