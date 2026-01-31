@@ -141,13 +141,25 @@ window.onload = async () => {
             const code = e.target.value.trim();
             if (code === "admin") { // 这里就是你的暗号
                 const section = document.getElementById('thought-section');
+                
+                // 1. 先解锁显示
                 section.style.display = 'block';
                 loadThoughts();
                 
-                // 成功解锁后的反馈
-                e.target.value = ""; // 清空暗号
+                // 2. 清空暗号并弹窗
+                e.target.value = ""; 
                 alert("🔒 邓万穿的私密空间已解锁！");
-                section.scrollIntoView({ behavior: 'smooth' });
+
+                // 3. 🚀 关键优化：给浏览器 300 毫秒的时间去“画”出这个板块
+                // 然后再执行平滑滚动
+                setTimeout(() => {
+                    // 使用 offsetTop 这种更硬核的方式定位
+                    const topPos = section.offsetTop - 70; // 减去 70 是为了避开顶部导航栏
+                    window.scrollTo({
+                        top: topPos,
+                        behavior: 'smooth'
+                    });
+                }, 300);
             }
         });
     }
