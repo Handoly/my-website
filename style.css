@@ -1,296 +1,173 @@
-/* --- 全局设置 --- */
+/* ==================== 1. 变量系统 ==================== */
+:root {
+    --primary-color: #008CBA;
+    --bg-color: #f0f8ff;
+    --card-bg: white;
+    --text-color: #333;
+    --nav-bg: white;
+    --input-bg: white;
+    --input-border: #ddd;
+    --tag-bg: #f0f0f0;
+    --tag-text: #666;
+    --footer-line: #eee;
+    --shadow: 0 5px 15px rgba(0,0,0,0.05);
+    --thought-orange: #ff9800; /* 专门给你的私密模块用的橙色 */
+}
+
+body.dark-mode {
+    --primary-color: #3b82f6;
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --text-color: #eee;
+    --nav-bg: #2d2d2d;
+    --input-bg: #444;
+    --input-border: #555;
+    --tag-bg: rgba(255, 255, 255, 0.1);
+    --tag-text: #aaa;
+    --footer-line: #444;
+    --shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* ==================== 2. 全局与加载页 ==================== */
 body {
-    margin: 0; /* 去掉浏览器默认的边距 */
-    padding: 0;
+    margin: 0; padding: 0;
     font-family: "微软雅黑", sans-serif;
-    background-color: #f0f8ff;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     text-align: center;
-    transition: background-color 0.5s, color 0.5s; /* 颜色变化过渡 */
+    transition: all 0.5s ease;
 }
 
-/* --- 🆕 导航栏样式 (Flexbox 布局) --- */
+#loading-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    z-index: 9999;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.loading-title { font-size: 24px; margin-bottom: 15px; font-weight: bold; }
+.loading-sub { color: var(--tag-text); opacity: 0.8; }
+.loading-spinner {
+    width: 40px; height: 40px;
+    border: 4px solid var(--tag-bg);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 20px;
+}
+
+/* ==================== 3. 导航与布局 ==================== */
 .navbar {
-    position: fixed; /* 固定在顶部 */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: white;
+    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    background-color: var(--nav-bg);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex; /* ✨ 开启弹性布局 ✨ */
-    justify-content: space-between; /* 让两端对齐 (Logo在左，菜单在右) */
-    align-items: center; /* 垂直居中 */
-    padding: 0 20px; /* 左右留点空隙 */
-    box-sizing: border-box; /* 确保padding不撑大盒子 */
-    z-index: 1000; /* 保证它浮在最上面 */
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 20px; box-sizing: border-box; z-index: 1000;
 }
 
-.logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #008CBA;
-}
+.nav-spacer { height: 80px; } /* 替代原有的 <br> */
+
+.logo { font-size: 20px; font-weight: bold; color: var(--primary-color); }
 
 .menu a {
-    text-decoration: none;
-    color: #666;
-    margin-left: 20px;
-    font-size: 14px;
+    text-decoration: none; color: var(--text-color);
+    margin-left: 20px; font-size: 14px; transition: color 0.3s;
 }
+.menu a:hover { color: var(--primary-color); }
 
-.menu a:hover {
-    color: #008CBA;
-}
-
-.menu button {
-    border: none;
-    background-color: #000000;
-    margin-left: 20px;
-    border-radius: 50%;
-}
-
-/* --- 之前的样式保留 --- */
-.avatar {
-    width: 150px;
-    border-radius: 50%;
-    border: 5px solid white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s; /* 头像动效 */
-}
-
-.avatar:hover {
-    transform: rotate(10deg) scale(1.2); /* 鼠标放上去旋转放大 */
-}
+#theme-btn { border: none; background: transparent; cursor: pointer; font-size: 18px; margin-left: 20px; }
 
 .container {
-    width: 90%;
-    max-width: 500px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: left;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    width: 90%; max-width: 500px; margin: 20px auto;
+    background: var(--card-bg); padding: 20px;
+    border-radius: 10px; text-align: left; box-shadow: var(--shadow);
 }
 
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* ==================== 4. 霓虹头像 ==================== */
+.profile-box { display: inline-block; position: relative; padding: 10px; }
+.avatar {
+    width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
 }
+.avatar:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
+    filter: brightness(1.1);
+}
+
+/* ==================== 5. 留言板滚动美化 ==================== */
+#comments-container {
+    max-height: 400px; overflow-y: scroll; padding-right: 8px;
+}
+#comments-container::-webkit-scrollbar { width: 6px; }
+#comments-container::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 10px; }
+#comments-container::-webkit-scrollbar-track { background: var(--tag-bg); border-radius: 10px; }
+
+.empty-hint { color: #888; text-align: center; }
+
+/* ==================== 6. 表单与按钮 ==================== */
+input, textarea {
+    width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg); color: var(--text-color); border-radius: 4px;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0, 140, 186, 0.3); }
 
 .btn-blue {
-    background-color: #008CBA;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
+    background-color: var(--primary-color); color: white; border: none;
+    padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%;
+}
+button:disabled { background-color: #a5a5a5 !important; cursor: not-allowed; opacity: 0.7; }
+
+/* ==================== 7. 私密想法专有样式 ==================== */
+.thought-container {
+    display: none; 
+    border-top: 5px solid var(--thought-orange);
+}
+.btn-thought {
+    background-color: var(--thought-orange);
+}
+#thoughts-container {
+    margin-top: 15px;
+}
+/* 每一条想法的样式卡片 */
+.thought-item {
+    font-size: 14px; padding: 10px; 
+    background: #fff8e1; border-radius: 5px; 
+    margin-bottom: 8px; color: #5d4037;
 }
 
-footer {
-    margin-top: 40px;
-    font-size: 12px;
-    color: #aaa;
-    margin-bottom: 20px;
-}
-
-/* --- 🌙 夜间模式的样式 --- */
-body.dark-mode {
-    background-color: #222; /* 深色背景 */
-    color: #eee; /* 浅色文字 */
-}
-
-body.dark-mode .container, 
-body.dark-mode .navbar {
-    background-color: #333; /* 卡片也变深 */
-    color: #eee;
-}
-
-body.dark-mode input, 
-body.dark-mode textarea {
-    background-color: #444;
-    border-color: #555;
-    color: white;
-}
-
-/* --- 📱 响应式设计的魔法区域 --- */
-
-/* 1. 默认情况下（电脑端），汉堡按钮是不显示的 */
-.hamburger {
-    display: none; /* 隐藏 */
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-}
-.dark-mode .hamburger {
-    color: white; /* 夜间模式变成白色 */
-}
-
-/* 2. 媒体查询：当屏幕宽度小于 768px 时（手机模式） */
-@media (max-width: 768px) {
-    
-    /* 让汉堡按钮显示出来 */
-    .hamburger {
-        display: block;
-    }
-
-    /* 改变菜单的样子：变成垂直排列，藏在导航栏下面 */
-    .menu {
-        display: none; /* 默认先藏起来 */
-        flex-direction: column; /* 变成竖着排 */
-        position: absolute; /* 绝对定位 */
-        top: 60px; /* 在导航栏正下方 */
-        left: 0;
-        width: 100%;
-        background-color: white;
-        box-shadow: 0 5px 5px rgba(0,0,0,0.1);
-        padding: 20px 0;
-        text-align: center;
-    }
-
-    /* 这是给 JS 用的：一旦加上 active 类，就显示出来 */
-    .menu.active {
-        display: flex; /* 这里的 flex 配合上面的 column 让它竖排 */
-    }
-
-    /* 调整手机上的链接间距 */
-    .menu a {
-        margin: 10px 0; /* 上下留空，左右不要 */
-        display: block; /* 占满一行，方便手指点 */
-        font-size: 18px;
-    }
-    
-    .menu button {
-        margin: 10px auto; /* 按钮居中 */
-    }
-
-    /* 夜间模式下的手机菜单背景 */
-    body.dark-mode .menu {
-        background-color: #333;
-    }
-}
-
-/* 留言区域的样式 */
-.comment-section {
-    margin-top: 20px;
-    padding-top: 10px;
-}
-
+/* ==================== 8. 留言卡片与动画 ==================== */
 .comment-card {
-    background: #f9f9f9;
-    border-left: 5px solid #008CBA;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    text-align: left;
-}
-
-.comment-card strong {
-    display: block;
-    color: #008CBA;
-    margin-bottom: 5px;
-}
-
-/* 夜间模式适配 */
-body.dark-mode .comment-card {
-    background: #444;
-    color: #eee;
-}
-
-.delete-btn {
-    float: right;
-    background: #ffeded;   /* 淡淡的红背景 */
-    color: #ff4d4d;        /* 亮红色 */
-    border: 1px solid #ffcccc;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s; /* 动画过渡 */
-}
-
-.delete-btn:hover {
-    background: #ff4d4d;   /* 鼠标放上去变全红 */
-    color: white;
-}
-
-.comment-card {
-    overflow: hidden; /* ✨ 新增：防止内部浮动元素（删除按钮）撑破外壳 */
-    position: relative; /* 为以后更高级的定位做准备 */
-}
-
-#name-input:focus, #content-input:focus {
-    outline: none;
-    border-color: #008CBA;
-    box-shadow: 0 0 5px rgba(0, 140, 186, 0.3);
-}
-
-body.dark-mode .delete-btn {
-    background: #553333; /* 深红色背景 */
-    color: #ff9999;      /* 浅红色文字 */
-    border-color: #774444;
-}
-
-body.dark-mode .delete-btn:hover {
-    background: #ff4d4d;
-    color: white;
-}
-
-/* 留言头部的布局：名字和属地并排 */
-.comment-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* 属地标签的样式 */
-.location-tag {
-    font-size: 12px;
-    color: #666;
-    background-color: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-/* 底部时间的样式 */
-.comment-footer {
-    border-top: 1px dashed #eee;
-    padding-top: 5px;
-    margin-top: 5px;
-    text-align: right;
-}
-
-/* 让每条留言卡片出现时自带“duang”的效果 */
-.comment-card {
+    background: var(--card-bg); border-left: 5px solid var(--primary-color);
+    padding: 12px; margin-bottom: 12px; border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
     animation: slideIn 0.3s ease-out;
 }
+.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.comment-header strong { color: var(--primary-color); }
+.location-tag { font-size: 11px; color: var(--tag-text); background-color: var(--tag-bg); padding: 2px 6px; border-radius: 4px; }
+.comment-footer { border-top: 1px dashed var(--footer-line); padding-top: 5px; margin-top: 8px; text-align: right; color: #999; }
+.delete-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+/* 响应式 */
+.hamburger { display: none; font-size: 24px; cursor: pointer; }
+@media (max-width: 768px) {
+    .hamburger { display: block; }
+    .menu {
+        display: none; flex-direction: column; position: absolute;
+        top: 60px; left: 0; width: 100%; background-color: var(--nav-bg);
+        box-shadow: 0 5px 5px rgba(0,0,0,0.1); padding: 20px 0;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    .menu.active { display: flex; }
+    .menu a { margin: 10px 0; display: block; font-size: 18px; }
 }
 
-@keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-/* 当按钮被禁用时的样式 */
-button:disabled {
-    background-color: #a5a5a5 !important; /* 变成灰色 */
-    cursor: not-allowed;                  /* 鼠标变成禁止图标 */
-    opacity: 0.7;
-}
-
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

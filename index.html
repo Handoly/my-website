@@ -2,37 +2,25 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 这行让手机端显示正常 -->
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="这是邓万穿的个人网页。这里记录了我的学习与生活点滴。">
-
     <meta name="keywords" content="邓万穿, 前端, 留言板, 个人主页, 简历">
-
     <meta name="author" content="邓万穿">
-    
     <title>邓万穿的个人主页</title>
-    
-    <!-- 🔗 关键点：引入外部的 CSS 文件 -->
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-    <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-        <div style="font-size: 24px; margin-bottom: 15px;">🚀 网页正在加载/升级中...</div>
-        <div style="color: #888;">通常仅需要几秒，马上就好哦~</div>
-        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin-top: 20px;"></div>
+    <div id="loading-screen">
+        <div class="loading-title">🚀 网页正在加载/升级中...</div>
+        <div class="loading-sub">通常仅需要几秒，马上就好哦~</div>
+        <div class="loading-spinner"></div>
     </div>
 
-    <!-- 🆕 新增：顶部导航栏 -->
     <nav class="navbar">
         <div class="logo">邓万穿</div>
-        
-        <!-- 🆕 新增：汉堡按钮（默认隐藏，手机显示） -->
-        <!-- onclick="toggleMenu()" 表示点击它执行 JS 函数 -->
         <div class="hamburger" onclick="toggleMenu()">☰</div>
-
-        <!-- 给菜单加个 id="nav-menu"，方便 JS 找到它 -->
         <div class="menu" id="nav-menu">
             <a href="#">首页</a>
             <a href="https://github.com/handoly" target="_blank">我的GitHub</a>
@@ -40,10 +28,8 @@
         </div>
     </nav>
 
-    <!-- 主要内容区域 -->
     <main>
-        <br><br><br> <!-- 给导航栏留点位置 -->
-        <h1>你好，我是邓万穿</h1>
+        <div class="nav-spacer"></div> <h1>你好，我是邓万穿</h1>
 
         <div class="profile-box">
             <img src="https://picsum.photos/seed/d/200" alt="我的头像" class="avatar">
@@ -52,7 +38,6 @@
         <p>这是一个 HTML 初学者的练习作品。</p>
         <p>我正在从零开始搭建我的个人天地。</p>
 
-        <!-- 卡片容器 -->
         <div class="container">
             <h3>🛠 我的技能 & 爱好</h3>
             <ul>
@@ -60,24 +45,27 @@
                 <li>VS Code 使用高手</li>
                 <li>看电影 & 吃火锅</li>
             </ul>
-
             <hr>
-
             <h3>📬 给我留言</h3>
             <form onsubmit="addComment(); return false;">
                 <input type="text" id="name-input" placeholder="你的名字" required>
-                
                 <textarea id="content-input" rows="3" placeholder="想说的话..."></textarea>
-                
                 <button type="submit" class="btn btn-blue">发送</button>
             </form>
 
             <div id="comment-list" class="comment-section">
                 <h4>💬 留言展示：</h4>
                 <div id="comments-container">
-                    <p style="color: #888;">暂无留言....</p>
+                    <p class="empty-hint">暂无留言....</p>
                 </div>
             </div>
+        </div>
+
+        <div id="thought-section" class="container thought-container">
+            <h3>🧠 我的私密想法</h3>
+            <textarea id="thought-input" rows="2" placeholder="记录当下的灵感..."></textarea>
+            <button onclick="addThought()" class="btn-blue btn-thought">记录想法</button>
+            <div id="thoughts-container"></div>
         </div>
     </main>
 
@@ -85,8 +73,6 @@
         <p>© 2026-2035 邓万穿😎 | Powered by VS Code</p>
     </footer>
 
-    <!-- 🔗 关键点：引入外部的 JS 文件 -->
     <script src="script.js"></script>
-
 </body>
 </html>
