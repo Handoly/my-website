@@ -94,6 +94,9 @@ body {
     box-shadow: 0 0 15px var(--primary-color);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
+    -webkit-user-select: none; /* 禁止选中图片 */
+    -webkit-touch-callout: none; /* 禁止手机长按弹出菜单 */
+    touch-action: manipulation; /* 🚀 关键：告诉浏览器这个元素不需要等待双击确认，直接触发点击 */
 }
 .avatar:hover {
     transform: scale(1.1) rotate(5deg);

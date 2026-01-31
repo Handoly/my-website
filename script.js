@@ -101,25 +101,6 @@ async function deleteComment(id) {
 
 let clickCount = 0;
 
-// 在 window.onload 中给头像绑定一个“召唤”函数
-document.querySelector('.avatar').onclick = () => {
-    clickCount++;
-    if (clickCount === 5) {
-        const password = prompt("请输入暗号：");
-        if (password === "admin") {
-            const section = document.getElementById('thought-section');
-            section.style.display = 'block';
-            loadThoughts();
-            
-            // 🚀 大神技巧：自动平滑滚动到这个模块
-            section.scrollIntoView({ behavior: 'smooth' }); 
-            
-            alert("欢迎回来，邓大神！");
-        }
-        clickCount = 0; // 重置计数
-    }
-};
-
 // 发送想法
 async function addThought() {
     const input = document.getElementById("thought-input");
@@ -166,6 +147,37 @@ window.onload = async () => {
     const savedName = localStorage.getItem('saved_username');
     if (savedName) document.getElementById("name-input").value = savedName;
 
+    // 🚀 核心修复：为头像添加点击计数
+    const avatar = document.querySelector('.avatar');
+    if (avatar) {
+        // 使用 touchend (手机端触发更快) 或者 onclick
+        avatar.addEventListener('click', (e) => {
+            // 阻止系统默认的连击缩放
+            // e.preventDefault(); 
+            
+            clickCount++;
+            console.log("当前点击次数:", clickCount); // 你可以在手机浏览器开发者工具看日志
+
+            if (clickCount === 5) {
+                const password = prompt("请输入暗号：");
+                if (password === "admin") {
+                    const section = document.getElementById('thought-section');
+                    section.style.display = 'block';
+                    loadThoughts();
+                    section.scrollIntoView({ behavior: 'smooth' });
+                    alert("欢迎回来，邓大神！");
+                }
+                clickCount = 0; 
+            }
+
+            // 💡 大神逻辑：如果 3 秒内没点完 5 次，就重置计数（防止误操作累加）
+            clearTimeout(window.clickTimer);
+            window.clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 3000);
+        });
+    }
+    
     // 加载数据
     await loadComments();
 
