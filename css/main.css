@@ -135,8 +135,9 @@ input:focus, textarea:focus { outline: none; border-color: var(--primary-color);
 button:disabled { background-color: #a5a5a5 !important; cursor: not-allowed; opacity: 0.7; }
 
 /* ==================== 7. 私密想法样式 (解锁后) ==================== */
+/* 加上 !important 确保初始状态绝对隐藏，不被其他样式干扰 */
 .thought-container {
-    display: none; /* 初始隐藏 */
+    display: none !important; 
     border-top: 5px solid var(--thought-orange);
 }
 .btn-thought { background-color: var(--thought-orange); margin-top: 10px; }
@@ -511,13 +512,75 @@ input[type="file"]:hover {
     transform: scale(1.05);
 }
 
-/* 图片加载前的占位样式 */
-img {
-    background: #f0f0f0; /* 给一个浅灰底色 */
-    transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+/* ==================== 9. 新增：Tips 板块专属样式 (不影响原样式) ==================== */
+
+/* Tips 网格布局：保持与 notes-grid 一致 */
+#tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
 }
 
-/* 图片还没下完时，稍微模糊一点，看起来像是在加载 */
-img:not([src]) {
-    opacity: 0;
+/* Tips 卡片视觉区分：使用专属青蓝色边框 */
+#tips-grid .note-card {
+    border-left: 4px solid #8be9fd; 
 }
+
+/* Tips 标签颜色优化 */
+#tips-grid .note-tag {
+    background-color: #8be9fd !important;
+    color: #282a36 !important; /* 深色文字保证阅读清晰 */
+}
+
+/* 管理后台针对 Tips 的适配 */
+#note-fields {
+    /* 当 post-type 为 tips 时，在 JS 中逻辑已处理，CSS 确保其显示与 notes 一致 */
+}
+
+/* 优化上传状态的提示文字颜色 */
+#upload-status, #content-upload-status {
+    font-size: 12px;
+    color: var(--primary-color);
+    margin-top: 5px;
+    display: block;
+    font-weight: normal;
+}
+
+/* 确保 Tips 板块在暗黑模式下的表现 */
+body.dark-mode #tips-grid .note-card {
+    background: var(--card-bg);
+    border-left: 4px solid #00acc1; /* 暗色模式下稍微加深青色 */
+}
+
+/* ==================== 10. 统一板块样式：学习笔记 (紫色风格) ==================== */
+
+/* 1. 让笔记卡片左侧带上紫色边框，与日常板块对齐 */
+#notes-grid .note-card {
+    border-left: 4px solid #bd93f9; 
+    border-radius: 8px; /* 保持与原卡片圆角一致 */
+}
+
+/* 2. 统一笔记板块的标签颜色为紫色 */
+#notes-grid .note-tag {
+    background-color: #bd93f9 !important;
+    color: white !important;
+}
+
+/* 3. 悬停效果微调，保持动态感 */
+#notes-grid .note-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(189, 147, 249, 0.2); /* 带一点紫色阴影 */
+}
+
+/* 确保 Tips 板块在暗黑模式下的表现 */
+body.dark-mode #tips-grid .note-card {
+    background: var(--card-bg);
+    border-left: 4px solid #00acc1; /* 暗色模式下颜色稍深，更柔和 */
+}
+
+/* 确保 Tips 的文字在标签里清晰 */
+#tips-grid .note-tag {
+    color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
+}
+

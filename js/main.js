@@ -181,6 +181,28 @@ async function loadDailyLogs() {
     `).join('');
 }
 
+async function loadTips() {
+    const grid = document.getElementById("tips-grid");
+    // 假设你在 Supabase 中新建了一个名为 'tips' 的数据表，或者复用 notes 表
+    // 这里我们按照你 HTML 的逻辑，从 'tips' 表读取
+    const { data, error } = await supabaseClient.from('tips').select('*').order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">暂时没有小知识分享~</p>';
+        return;
+    }
+
+    grid.innerHTML = data.map(tip => `
+        <div class="note-card" onclick='handleCardClick(${JSON.stringify(tip)}, "tips")'>
+            <img src="${tip.image_url || 'https://via.placeholder.com/150?text=Tips'}" loading="lazy" alt="小知识">
+            <div class="note-info">
+                <span class="note-tag" style="background:#8be9fd; color:#282a36;">💡 知识点</span>
+                <h5>${tip.title}</h5>
+            </div>
+        </div>
+    `).join('');
+}
+
 async function loadHonors() {
     const grid = document.getElementById("honors-grid");
     const { data, error } = await supabaseClient.from('honors').select('*').order('award_date', { ascending: false });
@@ -252,7 +274,12 @@ async function uploadToStorage() {
     const urlInput = document.getElementById('post-image');
     const postType = document.getElementById('post-type').value;
 
-    const bucketMap = { 'notes': 'notes-images', 'daily_logs': 'dailylog', 'honors': 'honors' };
+    const bucketMap = { 
+        'notes': 'notes-images', 
+        'daily_logs': 'dailylog', 
+        'honors': 'honors',
+        'tips': 'tips'
+    };
     const targetBucket = bucketMap[postType];
 
     if (fileInput.files.length === 0) return;
@@ -284,7 +311,12 @@ async function uploadToContent() {
     const status = document.getElementById('content-upload-status');
     const postType = document.getElementById('post-type').value;
 
-    const bucketMap = { 'notes': 'notes-images', 'daily_logs': 'dailylog', 'honors': 'honors' };
+    const bucketMap = { 
+        'notes': 'notes-images', 
+        'daily_logs': 'dailylog', 
+        'honors': 'honors',
+        'tips': 'tips'
+    };
     const targetBucket = bucketMap[postType];
 
     if (fileInput.files.length === 0) return;
@@ -380,7 +412,8 @@ function logoutAdmin() {
 function toggleFields() {
     const type = document.getElementById('post-type').value;
     document.getElementById('honor-fields').style.display = (type === 'honors') ? 'block' : 'none';
-    document.getElementById('note-fields').style.display = (type === 'notes') ? 'block' : 'none';
+    // 让 tips 和 notes 共用分类输入框
+    document.getElementById('note-fields').style.display = (type === 'notes' || type === 'tips') ? 'block' : 'none';
 }
 
 // ==================== 9. 初始化启动 ====================
@@ -414,7 +447,7 @@ window.onload = async () => {
         });
     }
 
-    await Promise.all([loadComments(), loadNotes(), loadDailyLogs(), loadHonors()]);
+    await Promise.all([loadComments(), loadNotes(), loadDailyLogs(), loadHonors(), loadTips()]);
     
     // 实时更新留言
     supabaseClient.channel('comments').on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => loadComments()).subscribe();
