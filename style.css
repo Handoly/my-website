@@ -352,3 +352,98 @@ body.dark-mode .thought-item {
 #daily-grid .note-tag {
     background-color: #50fa7b !important;
 }
+
+/* 荣誉墙网格 - 纯图片模式 */
+.honors-grid {
+    display: flex;
+    flex-wrap: wrap; /* 自动换行 */
+    gap: 15px;      /* 勋章之间的间距 */
+    justify-content: flex-start;
+    margin-top: 15px;
+}
+
+/* 勋章样式 */
+.honor-medal {
+    width: 80px;  /* 勋章宽度 */
+    height: 80px; /* 勋章高度 */
+    background: var(--card-bg);
+    border-radius: 15px; /* 圆角矩形，也可以设为 50% 变成圆形 */
+    border: 2px solid #ffd700; /* 金色边框 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.honor-medal:hover {
+    transform: scale(1.15) rotate(5deg); /* 悬停时放大并轻微旋转，增加灵动感 */
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+    z-index: 10;
+}
+
+.honor-medal img {
+    width: 80%;  /* 图片不占满，留出一点呼吸感 */
+    height: 80%;
+    object-fit: contain; /* 保证证书/奖杯完整显示 */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* 手机端适配：如果屏幕太窄，勋章稍微缩小一点 */
+@media (max-width: 480px) {
+    .honor-medal {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+.admin-card {
+    border: 2px solid var(--primary-color);
+    background: var(--card-bg);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+}
+
+.admin-card input, .admin-card textarea, .admin-card select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-btn:hover { opacity: 0.8; }
+
+input[type="file"] {
+    border: 2px dashed var(--input-border);
+    padding: 10px;
+    cursor: pointer;
+    background: transparent;
+}
+
+input[type="file"]:hover {
+    border-color: var(--primary-color);
+}
+
+#post-image[readonly] {
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    cursor: not-allowed;
+}

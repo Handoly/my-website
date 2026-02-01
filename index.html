@@ -40,12 +40,20 @@
         <p>我正在从零开始搭建我的个人天地。</p>
 
         <div class="container">
+            <h3>🏆 个人荣誉墙</h3>
+            <div id="honors-grid" class="honors-grid">
+                <p style="text-align: center; color: #888; grid-column: 1/-1;">勋章加载中...</p>
+            </div>
+        </div>
+
+        <div class="container">
             <h3>📚 学习笔记墙</h3>
             <div class="filter-bar">
                 <span class="filter-tag active" onclick="filterNotes('all')">全部</span>
                 <span class="filter-tag" onclick="filterNotes('前端')">前端</span>
                 <span class="filter-tag" onclick="filterNotes('日文')">日文</span>
                 <span class="filter-tag" onclick="filterNotes('FPGA')">FPGA</span>
+                <span class="filter-tag" onclick="filterNotes('电路')">电路</span>
             </div>
             
             <div id="notes-grid" class="notes-grid">
@@ -81,6 +89,46 @@
             <button onclick="addThought()" class="btn-blue btn-thought">记录想法</button>
             <div id="thoughts-container"></div>
         </div>
+
+        <div id="admin-panel" style="display: none;" class="container admin-card">
+            <h3>🛠️ 内容发布后台</h3>
+            
+            <div class="input-group">
+                <label>发布类型：</label>
+                <select id="post-type" onchange="toggleFields()">
+                    <option value="notes">📚 学习笔记</option>
+                    <option value="daily_logs">📅 日常生活</option>
+                    <option value="honors">🏆 个人荣誉</option>
+                </select>
+            </div>
+
+            <input type="text" id="post-title" placeholder="请输入标题...">
+            <div class="input-group">
+                <label>上传图片：</label>
+                <input type="file" id="file-upload" accept="image/*" onchange="uploadToStorage()">
+                <div id="upload-status" style="font-size: 12px; color: var(--primary-color); margin-top: 5px;"></div>
+                <input type="text" id="post-image" placeholder="上传后自动生成链接..." readonly>
+            </div>
+            <input type="text" id="post-image" placeholder="封面 URL (Storage 链接)...">
+            
+            <div id="honor-fields" style="display: none;">
+                <input type="text" id="post-issuer" placeholder="颁发机构...">
+                <input type="date" id="post-date">
+            </div>
+
+            <div id="note-fields">
+                <input type="text" id="post-category" placeholder="分类 (前端/日文/FPGA)...">
+            </div>
+            <div class="editor-toolbar">
+                <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
+                <input type="file" id="content-img-upload" accept="image/*" style="display:none" onchange="uploadToContent()">
+                <span id="content-upload-status"></span>
+            </div>
+            <textarea id="post-content" rows="8" placeholder="正文内容 (支持 Markdown)..."></textarea>
+            
+            <button onclick="submitPost()" id="submit-btn" class="submit-btn">立即发布</button>
+        </div>
+     
     </div>
     </main>
 

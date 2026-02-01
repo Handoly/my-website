@@ -263,6 +263,164 @@ async function loadDailyLogs() {
     }).join('');
 }
 
+// 加载个人荣誉
+async function loadHonors() {
+    const grid = document.getElementById("honors-grid");
+    const { data, error } = await supabaseClient
+        .from('honors')
+        .select('*')
+        .order('award_date', { ascending: false });
+
+    if (error || !data) return;
+
+    grid.innerHTML = data.map(honor => {
+        // 构建详情页展示的 Markdown
+        const enhancedContent = `
+### 🏆 ${honor.title}
+**颁发机构：** ${honor.issuer || '未知'}
+**获奖日期：** ${honor.award_date || '未记录'}
+
+---
+${honor.content || '暂无详细描述'}
+        `;
+
+        const detailObject = { ...honor, content: enhancedContent };
+
+        return `
+            <div class="honor-medal" onclick='openNote(${JSON.stringify(detailObject)})'>
+                <img src="${honor.image_url || 'https://via.placeholder.com/80?text=Honor'}" title="${honor.title}">
+            </div>
+        `;
+    }).join('');
+}
+
+// 1. 切换不同类型的输入框
+function toggleFields() {
+    const type = document.getElementById('post-type').value;
+    document.getElementById('honor-fields').style.display = (type === 'honors') ? 'block' : 'none';
+    document.getElementById('note-fields').style.display = (type === 'notes') ? 'block' : 'none';
+}
+
+// 2. 提交数据到 Supabase
+async function submitPost() {
+    const type = document.getElementById('post-type').value;
+    const btn = document.getElementById('submit-btn');
+    
+    // 获取基础数据
+    const postData = {
+        title: document.getElementById('post-title').value.trim(),
+        image_url: document.getElementById('post-image').value.trim(),
+        content: document.getElementById('post-content').value.trim()
+    };
+
+    if (!postData.title) {
+        alert("标题不能为空哦！");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "发布中...";
+
+    // 根据类型补充特定字段
+    if (type === 'notes') {
+        postData.category = document.getElementById('post-category').value || '未分类';
+    } else if (type === 'honors') {
+        postData.issuer = document.getElementById('post-issuer').value;
+        postData.award_date = document.getElementById('post-date').value;
+    } else if (type === 'daily_logs') {
+        postData.category = '日常';
+    }
+
+    const { error } = await supabaseClient.from(type).insert([postData]);
+
+    if (error) {
+        alert("发布失败：" + error.message);
+    } else {
+        alert("🚀 发布成功！页面即将刷新。");
+        location.reload(); // 刷新页面查看新内容
+    }
+    btn.disabled = false;
+    btn.innerText = "立即发布";
+}
+
+async function uploadToStorage() {
+    const fileInput = document.getElementById('file-upload');
+    const status = document.getElementById('upload-status');
+    const urlInput = document.getElementById('post-image');
+    
+    // 🚀 获取当前选择的发布类型
+    const postType = document.getElementById('post-type').value;
+
+    // 🚀 建立类型与存储桶(Bucket)的对应关系
+    const bucketMap = {
+        'notes': 'notes-images',
+        'daily_logs': 'dailylog',
+        'honors': 'honors'
+    };
+
+    const targetBucket = bucketMap[postType];
+
+    if (fileInput.files.length === 0) return;
+
+    const file = fileInput.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`; // 存放在桶的根目录即可
+
+    status.innerText = `🚀 正在上传至 ${targetBucket}...`;
+
+    // 1. 执行上传到对应的存储桶
+    const { data, error } = await supabaseClient.storage
+        .from(targetBucket)
+        .upload(filePath, file);
+
+    if (error) {
+        console.error("上传失败:", error.message);
+        status.innerText = "❌ 上传失败，请检查该桶的 Public 权限及 Policy";
+        return;
+    }
+
+    // 2. 获取该桶下的公共访问链接
+    const { data: publicData } = supabaseClient.storage
+        .from(targetBucket)
+        .getPublicUrl(filePath);
+
+    const publicUrl = publicData.publicUrl;
+
+    // 3. 填入输入框
+    urlInput.value = publicUrl;
+    status.innerText = `✅ 已成功存入 ${targetBucket}`;
+}
+
+async function uploadToContent() {
+    const fileInput = document.getElementById('content-img-upload');
+    const textArea = document.getElementById('post-content');
+    const status = document.getElementById('content-upload-status');
+    const postType = document.getElementById('post-type').value;
+
+    const bucketMap = { 'notes': 'notes-images', 'daily_logs': 'dailylog', 'honors': 'honors' };
+    const targetBucket = bucketMap[postType];
+
+    if (fileInput.files.length === 0) return;
+    const file = fileInput.files[0];
+    const fileName = `content-${Date.now()}.${file.name.split('.').pop()}`;
+
+    status.innerText = "正在上传...";
+
+    const { data, error } = await supabaseClient.storage.from(targetBucket).upload(fileName, file);
+    if (error) return alert("上传失败");
+
+    const { data: { publicUrl } } = supabaseClient.storage.from(targetBucket).getPublicUrl(fileName);
+
+    // 🚀 核心：在光标位置插入 Markdown 语法
+    const startPos = textArea.selectionStart;
+    const endPos = textArea.selectionEnd;
+    const markdownImg = `\n![图片描述](${publicUrl})\n`;
+    
+    textArea.value = textArea.value.substring(0, startPos) + markdownImg + textArea.value.substring(endPos);
+    status.innerText = "✅ 已插入";
+}
+
 // ==================== 4. 页面启动器 (唯一的入口) ====================
 window.onload = async () => {
     // 恢复夜间模式
@@ -285,6 +443,7 @@ window.onload = async () => {
                 
                 // 1. 先解锁显示
                 section.style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'block';
                 loadThoughts();
                 
                 // 2. 清空暗号并弹窗
@@ -309,6 +468,7 @@ window.onload = async () => {
     await loadComments();
     await loadNotes();
     await loadDailyLogs();
+    await loadHonors();
 
     // 实时监听
     supabaseClient.channel('public-comments')
