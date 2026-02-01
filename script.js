@@ -190,6 +190,15 @@ ${note.content || '暂无详细描述'}`;
             <div class="modal-detail-text markdown-body">${renderedContent}</div>
         </div>
     `;
+
+    // 🚀 核心：为正文里渲染出来的图片也绑定点击放大功能
+    setTimeout(() => {
+        const contentImages = body.querySelectorAll('.modal-detail-text img');
+        contentImages.forEach(img => {
+            img.onclick = () => openImageViewer(img.src);
+        });
+    }, 50);
+
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }

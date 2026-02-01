@@ -244,13 +244,49 @@ body.dark-mode .thought-item {
 }
 
 /* 详情页内的文字排版 */
-.modal-detail-img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+/* 1. 给图片增加一个“带滚动条”的容器 */
+.modal-image-container {
+    width: 100%;
+    max-height: 400px;         /* 🚀 固定容器的最大高度 */
+    overflow-y: auto;          /* 🚀 关键：如果图片高度超过 400px，显示垂直滚动条 */
+    overflow-x: hidden;        /* 禁止横向滚动 */
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: #f0f0f0;      /* 增加浅色背景，防止透明图不好看 */
+}
+
+/* 2. 调整图片样式，取消裁剪 */
+.modal-detail-img {
+    width: 100%;
+    height: auto;              /* 🚀 保持图片原始比例 */
+    display: block;
+    cursor: zoom-in;           /* 提示用户点击可以看全屏大图 */
+    border-radius: 0;          /* 容器已经有圆角了，内部图可以不用 */
+}
+
+/* 如果是暗黑模式，背景色调暗 */
+.dark-mode .modal-image-container {
+    background: #222;
+}
+/* 2. 🚀 新增：限制正文（Markdown 渲染出）的图片大小 */
+.modal-detail-text img {
+    max-width: 100%;           /* 宽度不超过容器 */
+    max-height: 300px;         /* 限制正文图片不要太高 */
+    height: auto;
+    display: block;
+    margin: 10px auto;         /* 图片居中 */
+    border-radius: 6px;
+    cursor: zoom-in;
+}
+
 .modal-detail-title { color: var(--primary-color); margin-bottom: 10px; }
+/* 3. 修正文字排版容器 */
 .modal-detail-text {
     line-height: 1.8; 
-    white-space: pre-wrap; /* 🚀 关键：保留你在后台敲的换行符 */
+    /* white-space: pre-wrap; 如果用了 marked.parse，建议去掉这行，由 Markdown 处理换行 */
     text-align: left;
     font-size: 15px;
+    color: var(--text-color);
 }
 
 @keyframes zoomIn {
