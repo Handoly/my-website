@@ -582,5 +582,5 @@ body.dark-mode #tips-grid .note-card {
 /* 确保 Tips 的文字在标签里清晰 */
 #tips-grid .note-tag {
     color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
-}
+} 
 
