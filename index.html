@@ -9,6 +9,7 @@
     <title>邓万穿的个人主页</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
@@ -39,13 +40,26 @@
         <p>我正在从零开始搭建我的个人天地。</p>
 
         <div class="container">
-            <h3>🛠 我的技能 & 爱好</h3>
-            <ul>
-                <li>HTML / CSS / JavaScript</li>
-                <li>VS Code 使用高手</li>
-                <li>看电影 & 吃火锅</li>
-            </ul>
-            <hr>
+            <h3>📚 学习笔记墙</h3>
+            <div class="filter-bar">
+                <span class="filter-tag active" onclick="filterNotes('all')">全部</span>
+                <span class="filter-tag" onclick="filterNotes('前端')">前端</span>
+                <span class="filter-tag" onclick="filterNotes('日文')">日文</span>
+                <span class="filter-tag" onclick="filterNotes('FPGA')">FPGA</span>
+            </div>
+            
+            <div id="notes-grid" class="notes-grid">
+                </div>
+        </div>
+
+        <div class="container">
+            <h3>📅 邓万穿的日常</h3>
+            <div id="daily-grid" class="notes-grid">
+                <p style="text-align: center; color: #888; grid-column: 1/-1;">正在加载日常记录...</p>
+            </div>
+        </div>
+
+        <div class="container">
             <h3>📬 给我留言</h3>
             <form onsubmit="addComment(); return false;">
                 <input type="text" id="name-input" placeholder="你的名字" required>
@@ -73,6 +87,19 @@
     <footer>
         <p>© 2026-2035 邓万穿😎 | Powered by VS Code</p>
     </footer>
+
+    <div id="note-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeNote()">&times;</span>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <div id="image-viewer" class="image-viewer" onclick="closeImageViewer()">
+        <span class="close-viewer">&times;</span>
+        <img id="full-image" src="" alt="全屏预览">
+    </div>
 
     <script src="script.js"></script>
 </body>

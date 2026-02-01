@@ -122,6 +122,147 @@ async function addThought() {
     }
 }
 
+// 获取并渲染笔记
+async function loadNotes(category = 'all') {
+    const grid = document.getElementById("notes-grid");
+    let query = supabaseClient.from('notes').select('*').order('created_at', { ascending: false });
+    
+    // 如果不是 'all'，就按分类过滤
+    if (category !== 'all') {
+        query = query.eq('category', category);
+    }
+
+    const { data, error } = await query;
+    if (error) return;
+
+    grid.innerHTML = data.map(note => `
+        <div class="note-card" onclick='openNote(${JSON.stringify(note)})'>
+            <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" alt="预览">
+            <div class="note-info">
+                <span class="note-category">${note.category}</span>
+                <h5>${note.title}</h5>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 切换分类的高亮效果
+function filterNotes(cat) {
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.classList.remove('active');
+        if(tag.innerText === cat || (cat === 'all' && tag.innerText === '全部')) tag.classList.add('active');
+    });
+    loadNotes(cat);
+}
+
+function showNoteDetail(title, content) {
+    alert("【" + title + "】\n\n" + content);
+}
+
+// 打开详情
+function openNote(note) {
+    const modal = document.getElementById('note-modal');
+    const body = document.getElementById('modal-body');
+    
+    // 🚀 核心：使用 marked 解析 markdown 内容
+    // 增加 breaks: true 可以让你的回车换行直接生效
+    const renderedContent = marked.parse(note.content || '暂无详细记录...', {
+        breaks: true,
+        gfm: true
+    });
+
+    body.innerHTML = `
+        <div class="modal-image-container">
+            <img src="${note.image_url}" class="modal-detail-img" onclick="openImageViewer(this.src)">
+        </div>
+        <div class="modal-info-content">
+            <span class="note-tag">${note.category}</span>
+            <h2 class="modal-detail-title">${note.title}</h2>
+            <hr style="border: 0; border-top: 1px dashed var(--input-border); margin: 15px 0;">
+            <div class="modal-detail-text markdown-body">${renderedContent}</div>
+        </div>
+    `;
+    
+    // 🚀 额外动作：给 markdown 里的图片自动加上点击放大功能
+    setTimeout(() => {
+        const images = body.querySelectorAll('.modal-detail-text img');
+        images.forEach(img => {
+            img.onclick = () => openImageViewer(img.src);
+            img.style.cursor = 'zoom-in';
+            img.classList.add('content-inline-img'); // 复用之前的样式
+        });
+    }, 50);
+
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// 关闭详情
+function closeNote() {
+    document.getElementById('note-modal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // 恢复背景滚动
+}
+
+// 点击遮罩层也可以关闭
+window.onclick = (event) => {
+    const modal = document.getElementById('note-modal');
+    if (event.target == modal) closeNote();
+}
+
+// 1. 打开全屏预览
+function openImageViewer(src) {
+    const viewer = document.getElementById('image-viewer');
+    const fullImg = document.getElementById('full-image');
+    fullImg.src = src;
+    viewer.style.display = 'flex';
+    // 隐藏详情框滚动条
+    document.body.style.overflow = 'hidden'; 
+}
+
+// 2. 关闭全屏预览
+function closeImageViewer() {
+    document.getElementById('image-viewer').style.display = 'none';
+    // 如果详情框还在，保持 body 锁定；如果不在则恢复
+    if (document.getElementById('note-modal').style.display === 'none') {
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// 1. 加载日常记录
+async function loadDailyLogs() {
+    const grid = document.getElementById("daily-grid");
+    
+    const { data, error } = await supabaseClient
+        .from('daily_logs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("加载日常失败:", error);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">今天还没发生什么新鲜事呢~</p>';
+        return;
+    }
+
+    grid.innerHTML = data.map(log => {
+        // 格式化日期：显示为 2024-05-20
+        const date = new Date(log.created_at).toLocaleDateString();
+        
+        return `
+            <div class="note-card" onclick='openNote(${JSON.stringify(log)})'>
+                <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" alt="日常图片">
+                <div class="note-info">
+                    <span class="note-tag" style="background:#50fa7b; color:#282a36;">${date}</span>
+                    <h5>${log.title}</h5>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 // ==================== 4. 页面启动器 (唯一的入口) ====================
 window.onload = async () => {
     // 恢复夜间模式
@@ -166,6 +307,8 @@ window.onload = async () => {
 
     // 加载数据
     await loadComments();
+    await loadNotes();
+    await loadDailyLogs();
 
     // 实时监听
     supabaseClient.channel('public-comments')
