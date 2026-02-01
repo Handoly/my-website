@@ -284,7 +284,7 @@ async function loadHonors() {
         // 直接把原始数据 honor 传给点击函数
         return `
             <div class="honor-medal" onclick='handleCardClick(${JSON.stringify(honor)}, "honors")'>
-                <img src="${honor.image_url || 'https://via.placeholder.com/80?text=Honor'}" title="${honor.title}">
+            <img src="${honor.image_url || 'default-icon.png'}" title="${honor.title}" loading="lazy" alt="荣誉勋章">
             </div>
         `;
     }).join('');
