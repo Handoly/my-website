@@ -1,167 +1,231 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="这是邓万穿的个人网页。这里记录了我的学习与生活点滴。">
-    <meta name="keywords" content="邓万穿, 前端, 留言板, 个人主页, 简历">
-    <meta name="author" content="邓万穿">
-    <title>邓万穿的个人主页</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
-    <script src="https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> -->
-    <script src="https://lib.baomitu.com/marked/4.0.2/marked.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="这是邓万穿的个人网页。这里记录了我的学习与生活点滴。">
+  <meta name="keywords" content="邓万穿, 前端, 留言板, 个人主页, 简历">
+  <meta name="author" content="邓万穿">
+
+  <title>邓万穿的个人主页</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/main.css">
+
+  <!-- Third-party libs -->
+  <script src="https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://lib.baomitu.com/marked/4.0.2/marked.min.js"></script>
 </head>
 
 <body>
-    <div id="loading-screen">
-        <div class="loading-title">🚀 网页正在加载/升级中...</div>
-        <div class="loading-sub">通常仅需要几秒，马上就好哦~</div>
-        <div class="loading-spinner"></div>
+
+  <!-- ========== Loading Screen ========== -->
+  <div id="loading-screen">
+    <div class="loading-title">🚀 网页正在加载/升级中...</div>
+    <div class="loading-sub">通常仅需要几秒，马上就好哦~</div>
+    <div class="loading-spinner"></div>
+  </div>
+
+
+  <!-- ========== Navigation Bar ========== -->
+  <nav class="navbar">
+    <div class="logo">邓万穿</div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <div class="menu" id="nav-menu">
+      <a href="#">首页</a>
+      <a href="https://github.com/handoly" target="_blank">我的GitHub</a>
+      <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </nav>
+
+
+  <!-- ========== Main Content ========== -->
+  <main>
+
+    <div class="nav-spacer"></div>
+
+    <!-- Profile -->
+    <h1>你好，我是邓万穿</h1>
+
+    <div class="profile-box">
+      <img src="https://picsum.photos/seed/d/200" alt="我的头像" class="avatar">
     </div>
 
-    <nav class="navbar">
-        <div class="logo">邓万穿</div>
-        <div class="hamburger" onclick="toggleMenu()">☰</div>
-        <div class="menu" id="nav-menu">
-            <a href="#">首页</a>
-            <a href="https://github.com/handoly" target="_blank">我的GitHub</a>
-            <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+    <p>这是一个 HTML 初学者的练习作品。</p>
+    <p>我正在从零开始搭建我的个人天地。</p>
+
+
+    <!-- Honors -->
+    <section class="container">
+      <h3>🏆 个人荣誉墙</h3>
+
+      <div id="honors-grid" class="honors-grid">
+        <p style="text-align:center;color:#888;grid-column:1/-1;">
+          勋章加载中...
+        </p>
+      </div>
+    </section>
+
+
+    <!-- Notes -->
+    <section class="container">
+      <h3>📚 学习笔记墙</h3>
+
+      <div class="filter-bar">
+        <span class="filter-tag active" onclick="filterNotes('all')">全部</span>
+        <span class="filter-tag" onclick="filterNotes('前端')">前端</span>
+        <span class="filter-tag" onclick="filterNotes('日文')">日文</span>
+        <span class="filter-tag" onclick="filterNotes('FPGA')">FPGA</span>
+        <span class="filter-tag" onclick="filterNotes('电路')">电路</span>
+      </div>
+
+      <div id="notes-grid" class="notes-grid"></div>
+    </section>
+
+
+    <!-- Daily Logs -->
+    <section class="container">
+      <h3>📅 邓万穿的日常</h3>
+
+      <div id="daily-grid" class="notes-grid">
+        <p style="text-align:center;color:#888;grid-column:1/-1;">
+          正在加载日常记录...
+        </p>
+      </div>
+    </section>
+
+
+    <!-- Tips -->
+    <section class="container">
+      <h3>💡 小知识 Tips</h3>
+
+      <div id="tips-grid" class="notes-grid">
+        <p style="text-align:center;color:#888;grid-column:1/-1;">
+          正在加载小知识...
+        </p>
+      </div>
+    </section>
+
+
+    <!-- Comment Section -->
+    <section class="container">
+      <h3>📬 给我留言</h3>
+
+      <form onsubmit="addComment(); return false;">
+        <input type="text" id="name-input" placeholder="你的名字" required>
+        <textarea id="content-input" rows="3" placeholder="想说的话..."></textarea>
+        <button type="submit" class="btn btn-blue">发送</button>
+      </form>
+
+      <div id="comment-list" class="comment-section">
+        <h4>💬 留言展示：</h4>
+
+        <div id="comments-container">
+          <p class="empty-hint">暂无留言....</p>
         </div>
-    </nav>
+      </div>
+    </section>
 
-    <main>
-        <div class="nav-spacer"></div> <h1>你好，我是邓万穿</h1>
 
-        <div class="profile-box">
-            <img src="https://picsum.photos/seed/d/200" alt="我的头像" class="avatar">
-        </div>
-        
-        <p>这是一个 HTML 初学者的练习作品。</p>
-        <p>我正在从零开始搭建我的个人天地。</p>
+    <!-- Thought Section -->
+    <section id="thought-section" class="container thought-container">
+      <h3>🧠 我的私密想法</h3>
 
-        <div class="container">
-            <h3>🏆 个人荣誉墙</h3>
-            <div id="honors-grid" class="honors-grid">
-                <p style="text-align: center; color: #888; grid-column: 1/-1;">勋章加载中...</p>
-            </div>
-        </div>
+      <textarea id="thought-input" rows="2" placeholder="记录当下的灵感..."></textarea>
+      <button onclick="addThought()" class="btn-blue btn-thought">记录想法</button>
 
-        <div class="container">
-            <h3>📚 学习笔记墙</h3>
-            <div class="filter-bar">
-                <span class="filter-tag active" onclick="filterNotes('all')">全部</span>
-                <span class="filter-tag" onclick="filterNotes('前端')">前端</span>
-                <span class="filter-tag" onclick="filterNotes('日文')">日文</span>
-                <span class="filter-tag" onclick="filterNotes('FPGA')">FPGA</span>
-                <span class="filter-tag" onclick="filterNotes('电路')">电路</span>
-            </div>
-            
-            <div id="notes-grid" class="notes-grid">
-                </div>
-        </div>
+      <div id="thoughts-container"></div>
+    </section>
 
-        <div class="container">
-            <h3>📅 邓万穿的日常</h3>
-            <div id="daily-grid" class="notes-grid">
-                <p style="text-align: center; color: #888; grid-column: 1/-1;">正在加载日常记录...</p>
-            </div>
-        </div>
 
-        <div class="container">
-            <h3>📬 给我留言</h3>
-            <form onsubmit="addComment(); return false;">
-                <input type="text" id="name-input" placeholder="你的名字" required>
-                <textarea id="content-input" rows="3" placeholder="想说的话..."></textarea>
-                <button type="submit" class="btn btn-blue">发送</button>
-            </form>
+    <!-- Admin Panel -->
+    <section id="admin-panel" class="container admin-card" style="display:none;">
 
-            <div id="comment-list" class="comment-section">
-                <h4>💬 留言展示：</h4>
-                <div id="comments-container">
-                    <p class="empty-hint">暂无留言....</p>
-                </div>
-            </div>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+        <h3 id="admin-title">🛠️ 内容发布后台</h3>
+        <button onclick="logoutAdmin()" class="btn-logout">退出管理 👋</button>
+      </div>
 
-        <div id="thought-section" class="container thought-container">
-            <h3>🧠 我的私密想法</h3>
-            <textarea id="thought-input" rows="2" placeholder="记录当下的灵感..."></textarea>
-            <button onclick="addThought()" class="btn-blue btn-thought">记录想法</button>
-            <div id="thoughts-container"></div>
-        </div>
+      <input type="hidden" id="edit-id">
 
-    <div id="admin-panel" style="display: none;" class="container admin-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="admin-title" style="margin: 0;">🛠️ 内容发布后台</h3>
-            <button onclick="logoutAdmin()" class="btn-logout">退出管理 👋</button>
-        </div>
+      <div class="input-group">
+        <label>发布类型：</label>
+        <select id="post-type" onchange="toggleFields()">
+          <option value="notes">📚 学习笔记</option>
+          <option value="daily_logs">📅 日常生活</option>
+          <option value="tips">💡 小知识 Tips</option>
+          <option value="honors">🏆 个人荣誉</option>
+        </select>
+      </div>
 
-        <input type="hidden" id="edit-id">
-        
-        <div class="input-group">
-            <label>发布类型：</label>
-            <select id="post-type" onchange="toggleFields()">
-                <option value="notes">📚 学习笔记</option>
-                <option value="daily_logs">📅 日常生活</option>
-                <option value="honors">🏆 个人荣誉</option>
-            </select>
-        </div>
+      <input type="text" id="post-title" placeholder="请输入标题...">
 
-        <input type="text" id="post-title" placeholder="请输入标题...">
+      <div class="input-group">
+        <label>封面图片：</label>
 
-        <div class="input-group">
-            <label>封面图片：</label>
-            <input type="file" id="file-upload" accept="image/*" onchange="uploadToStorage()">
-            <div id="upload-status" style="font-size: 12px; color: var(--primary-color); margin-top: 5px;"></div>
-            <input type="text" id="post-image" placeholder="封面 URL (上传后自动生成或手动粘贴)...">
-        </div>
-        
-        <div id="honor-fields" style="display: none;">
-            <input type="text" id="post-issuer" placeholder="颁发机构...">
-            <input type="date" id="post-date">
-        </div>
+        <input type="file" id="file-upload" accept="image/*" onchange="uploadToStorage()">
+        <div id="upload-status" style="font-size:12px;color:var(--primary-color);margin-top:5px;"></div>
 
-        <div id="note-fields">
-            <input type="text" id="post-category" placeholder="分类 (前端/日文/FPGA)...">
-        </div>
+        <input type="text" id="post-image" placeholder="封面 URL (上传后自动生成或手动粘贴)...">
+      </div>
 
-        <div class="editor-toolbar">
-            <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
-            <input type="file" id="content-img-upload" accept="image/*" style="display:none" onchange="uploadToContent()">
-            <span id="content-upload-status"></span>
-        </div>
+      <div id="honor-fields" style="display:none;">
+        <input type="text" id="post-issuer" placeholder="颁发机构...">
+        <input type="date" id="post-date">
+      </div>
 
-        <textarea id="post-content" rows="8" placeholder="正文内容 (支持 Markdown)..."></textarea>
-        
-        <div class="admin-buttons" style="display: flex; gap: 10px; margin-top: 10px;">
-            <button onclick="submitPost()" id="submit-btn" class="submit-btn" style="flex: 2;">立即发布</button>
-            <button onclick="deletePost()" id="delete-btn" class="submit-btn" style="flex: 1; background: #ff4757; display: none;">删除</button>
-            <button onclick="cancelEdit()" id="cancel-btn" class="submit-btn" style="flex: 1; background: #747d8c; display: none;">取消</button>
-        </div>
+      <div id="note-fields">
+        <input type="text" id="post-category" placeholder="分类 (前端/日文/FPGA)...">
+      </div>
+
+      <div class="editor-toolbar">
+        <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
+        <input type="file" id="content-img-upload" accept="image/*" hidden onchange="uploadToContent()">
+        <span id="content-upload-status"></span>
+      </div>
+
+      <textarea id="post-content" rows="8" placeholder="正文内容 (支持 Markdown)..."></textarea>
+
+      <div class="admin-buttons" style="display:flex;gap:10px;margin-top:10px;">
+        <button onclick="submitPost()" id="submit-btn" class="submit-btn" style="flex:2;">立即发布</button>
+        <button onclick="deletePost()" id="delete-btn" class="submit-btn" style="flex:1;background:#ff4757;display:none;">删除</button>
+        <button onclick="cancelEdit()" id="cancel-btn" class="submit-btn" style="flex:1;background:#747d8c;display:none;">取消</button>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ========== Footer ========== -->
+  <footer>
+    <p>© 2026-2035 邓万穿 😎 | Powered by VS Code</p>
+  </footer>
+
+
+  <!-- ========== Modals ========== -->
+
+  <!-- Note Modal -->
+  <div id="note-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeNote()">&times;</span>
+      <div id="modal-body"></div>
     </div>
+  </div>
 
-    </div>
-    </main>
+  <!-- Image Viewer -->
+  <div id="image-viewer" class="image-viewer" onclick="closeImageViewer()">
+    <span class="close-viewer">&times;</span>
+    <img id="full-image" src="" alt="全屏预览">
+  </div>
 
-    <footer>
-        <p>© 2026-2035 邓万穿😎 | Powered by VS Code</p>
-    </footer>
 
-    <div id="note-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeNote()">&times;</span>
-            <div id="modal-body">
-                </div>
-        </div>
-    </div>
+  <!-- Main Script -->
+    <script type="module" src="./js/main.js"></script>
 
-    <div id="image-viewer" class="image-viewer" onclick="closeImageViewer()">
-        <span class="close-viewer">&times;</span>
-        <img id="full-image" src="" alt="全屏预览">
-    </div>
-
-    <script src="script.js"></script>
 </body>
-</html> 
+</html>
