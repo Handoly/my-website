@@ -90,45 +90,56 @@
             <div id="thoughts-container"></div>
         </div>
 
-        <div id="admin-panel" style="display: none;" class="container admin-card">
-            <h3>🛠️ 内容发布后台</h3>
-            
-            <div class="input-group">
-                <label>发布类型：</label>
-                <select id="post-type" onchange="toggleFields()">
-                    <option value="notes">📚 学习笔记</option>
-                    <option value="daily_logs">📅 日常生活</option>
-                    <option value="honors">🏆 个人荣誉</option>
-                </select>
-            </div>
-
-            <input type="text" id="post-title" placeholder="请输入标题...">
-            <div class="input-group">
-                <label>上传图片：</label>
-                <input type="file" id="file-upload" accept="image/*" onchange="uploadToStorage()">
-                <div id="upload-status" style="font-size: 12px; color: var(--primary-color); margin-top: 5px;"></div>
-                <input type="text" id="post-image" placeholder="上传后自动生成链接..." readonly>
-            </div>
-            <input type="text" id="post-image" placeholder="封面 URL (Storage 链接)...">
-            
-            <div id="honor-fields" style="display: none;">
-                <input type="text" id="post-issuer" placeholder="颁发机构...">
-                <input type="date" id="post-date">
-            </div>
-
-            <div id="note-fields">
-                <input type="text" id="post-category" placeholder="分类 (前端/日文/FPGA)...">
-            </div>
-            <div class="editor-toolbar">
-                <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
-                <input type="file" id="content-img-upload" accept="image/*" style="display:none" onchange="uploadToContent()">
-                <span id="content-upload-status"></span>
-            </div>
-            <textarea id="post-content" rows="8" placeholder="正文内容 (支持 Markdown)..."></textarea>
-            
-            <button onclick="submitPost()" id="submit-btn" class="submit-btn">立即发布</button>
+    <div id="admin-panel" style="display: none;" class="container admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="admin-title" style="margin: 0;">🛠️ 内容发布后台</h3>
+            <button onclick="logoutAdmin()" class="btn-logout">退出管理 👋</button>
         </div>
-     
+
+        <input type="hidden" id="edit-id">
+        
+        <div class="input-group">
+            <label>发布类型：</label>
+            <select id="post-type" onchange="toggleFields()">
+                <option value="notes">📚 学习笔记</option>
+                <option value="daily_logs">📅 日常生活</option>
+                <option value="honors">🏆 个人荣誉</option>
+            </select>
+        </div>
+
+        <input type="text" id="post-title" placeholder="请输入标题...">
+
+        <div class="input-group">
+            <label>封面图片：</label>
+            <input type="file" id="file-upload" accept="image/*" onchange="uploadToStorage()">
+            <div id="upload-status" style="font-size: 12px; color: var(--primary-color); margin-top: 5px;"></div>
+            <input type="text" id="post-image" placeholder="封面 URL (上传后自动生成或手动粘贴)...">
+        </div>
+        
+        <div id="honor-fields" style="display: none;">
+            <input type="text" id="post-issuer" placeholder="颁发机构...">
+            <input type="date" id="post-date">
+        </div>
+
+        <div id="note-fields">
+            <input type="text" id="post-category" placeholder="分类 (前端/日文/FPGA)...">
+        </div>
+
+        <div class="editor-toolbar">
+            <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
+            <input type="file" id="content-img-upload" accept="image/*" style="display:none" onchange="uploadToContent()">
+            <span id="content-upload-status"></span>
+        </div>
+
+        <textarea id="post-content" rows="8" placeholder="正文内容 (支持 Markdown)..."></textarea>
+        
+        <div class="admin-buttons" style="display: flex; gap: 10px; margin-top: 10px;">
+            <button onclick="submitPost()" id="submit-btn" class="submit-btn" style="flex: 2;">立即发布</button>
+            <button onclick="deletePost()" id="delete-btn" class="submit-btn" style="flex: 1; background: #ff4757; display: none;">删除</button>
+            <button onclick="cancelEdit()" id="cancel-btn" class="submit-btn" style="flex: 1; background: #747d8c; display: none;">取消</button>
+        </div>
+    </div>
+
     </div>
     </main>
 

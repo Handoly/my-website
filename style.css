@@ -117,6 +117,7 @@ body {
 .comment-header strong { color: var(--primary-color); }
 .location-tag { font-size: 11px; color: var(--tag-text); background-color: var(--tag-bg); padding: 2px 6px; border-radius: 4px; }
 .comment-footer { border-top: 1px dashed var(--footer-line); padding-top: 5px; margin-top: 8px; text-align: right; color: #999; }
+/* 把删除按钮设置为不可见，不允许删除留言 */
 .delete-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; }
 
 /* ==================== 6. 表单与按钮 ==================== */
@@ -245,7 +246,7 @@ body.dark-mode .thought-item {
 /* 详情页内的文字排版 */
 .modal-detail-img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
 .modal-detail-title { color: var(--primary-color); margin-bottom: 10px; }
-.modal-detail-text { 
+.modal-detail-text {
     line-height: 1.8; 
     white-space: pre-wrap; /* 🚀 关键：保留你在后台敲的换行符 */
     text-align: left;
@@ -353,28 +354,33 @@ body.dark-mode .thought-item {
     background-color: #50fa7b !important;
 }
 
-/* 荣誉墙网格 - 纯图片模式 */
+/* 荣誉墙网格 - 修复右侧空白问题 */
 .honors-grid {
-    display: flex;
-    flex-wrap: wrap; /* 自动换行 */
-    gap: 15px;      /* 勋章之间的间距 */
-    justify-content: flex-start;
+    display: grid;
+    /* 核心修改：使用 repeat(auto-fit) 让系统自动填充空间 */
+    /* minmax(80px, 1fr) 保证最小 80px，剩下的空间由所有勋章平分 */
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px;      
+    justify-items: center; /* 勋章在格子内居中 */
     margin-top: 15px;
+    width: 100%;    /* 确保容器占满宽度 */
 }
 
-/* 勋章样式 */
+/* 勋章样式微调 */
 .honor-medal {
-    width: 80px;  /* 勋章宽度 */
-    height: 80px; /* 勋章高度 */
+    /* 删掉原来的固定的 width: 80px */
+    width: 100%;      /* 宽度随格子缩放 */
+    max-width: 100px; /* 但限制一个最大宽度，防止平板上变得巨宽 */
+    aspect-ratio: 1 / 1; /* 强制保持正方形 */
+    
     background: var(--card-bg);
-    border-radius: 15px; /* 圆角矩形，也可以设为 50% 变成圆形 */
-    border: 2px solid #ffd700; /* 金色边框 */
+    border-radius: 15px; 
+    border: 2px solid #ffd700; 
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: hidden;
+    transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
@@ -446,4 +452,25 @@ input[type="file"]:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #888;
     cursor: not-allowed;
+}
+
+#delete-btn:hover {
+    background-color: #ff1f30 !important;
+    transform: scale(1.05);
+}
+
+.btn-logout {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #ff6b81;
+    transform: scale(1.05);
 }

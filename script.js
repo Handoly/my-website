@@ -30,26 +30,28 @@ async function loadComments() {
 
     if (error) return;
 
-    container.innerHTML = "";
-    if (data && data.length > 0) {
-        data.forEach(item => {
-            const time = new Date(item.created_at).toLocaleString('zh-CN', { hour12: false });
-            const card = document.createElement("div");
-            card.className = "comment-card";
-            card.innerHTML = `
-                <button class="delete-btn" onclick="deleteComment('${item.id}')">×</button>
-                <div class="comment-header">
-                    <strong>${item.username}</strong>
-                    <span class="location-tag">📍 ${item.location || '未知'}</span>
-                </div>
-                <p style="margin: 8px 0;">${item.content}</p>
-                <div class="comment-footer"><small>${time}</small></div>
-            `;
-            container.appendChild(card);
-        });
-    } else {
+    // 🚀 核心逻辑：判断当前是否是管理模式
+    const isAdmin = document.getElementById('admin-panel').style.display === 'block' || 
+                    localStorage.getItem('keep_admin_open') === 'true';
+
+    if (data.length === 0) {
         container.innerHTML = '<p class="empty-hint">暂无留言，快来抢沙发！</p>';
+        return;
     }
+    container.innerHTML = "";
+    container.innerHTML = data.map(comment => `
+        ${isAdmin ? `
+            <button class="delete-btn" onclick="deleteComment('${comment.id}')">×</button>
+            ` : ''}
+        <div class="comment-card">
+            <div class="comment-header">
+                <strong>${comment.username}</strong>
+                <span class="location-tag">📍 ${comment.location || '中国'}</span>
+            </div>
+            <p class="comment-content">${comment.content}</p>
+            <div class="comment-footer"><small>${new Date(comment.created_at).toLocaleString('zh-CN', { hour12: false })}</small></div>
+        </div>
+    `).join('');
 }
 
 // 发送留言
@@ -136,7 +138,7 @@ async function loadNotes(category = 'all') {
     if (error) return;
 
     grid.innerHTML = data.map(note => `
-        <div class="note-card" onclick='openNote(${JSON.stringify(note)})'>
+        <div class="note-card" onclick='handleCardClick(${JSON.stringify(note)}, "notes")'>
             <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" alt="预览">
             <div class="note-info">
                 <span class="note-category">${note.category}</span>
@@ -163,36 +165,31 @@ function showNoteDetail(title, content) {
 function openNote(note) {
     const modal = document.getElementById('note-modal');
     const body = document.getElementById('modal-body');
+
+    // 🚀 只有在展示荣誉详情时，才即时生成装饰性的 Markdown
+    let displayContent = note.content || '暂无详细描述';
     
-    // 🚀 核心：使用 marked 解析 markdown 内容
-    // 增加 breaks: true 可以让你的回车换行直接生效
-    const renderedContent = marked.parse(note.content || '暂无详细记录...', {
-        breaks: true,
-        gfm: true
-    });
+    // 如果是荣誉类型，我们在展示时动态套用模板
+    if (note.issuer || note.award_date) {
+        displayContent = `### 🏆 ${note.title}
+**颁发机构：** ${note.issuer || '未知'}
+**获奖日期：** ${note.award_date || '未记录'}
+---
+${note.content || '暂无详细描述'}`;
+    }
+
+    const renderedContent = marked.parse(displayContent, { breaks: true });
 
     body.innerHTML = `
         <div class="modal-image-container">
             <img src="${note.image_url}" class="modal-detail-img" onclick="openImageViewer(this.src)">
         </div>
         <div class="modal-info-content">
-            <span class="note-tag">${note.category}</span>
+            <span class="note-tag">${note.category || '荣誉'}</span>
             <h2 class="modal-detail-title">${note.title}</h2>
-            <hr style="border: 0; border-top: 1px dashed var(--input-border); margin: 15px 0;">
             <div class="modal-detail-text markdown-body">${renderedContent}</div>
         </div>
     `;
-    
-    // 🚀 额外动作：给 markdown 里的图片自动加上点击放大功能
-    setTimeout(() => {
-        const images = body.querySelectorAll('.modal-detail-text img');
-        images.forEach(img => {
-            img.onclick = () => openImageViewer(img.src);
-            img.style.cursor = 'zoom-in';
-            img.classList.add('content-inline-img'); // 复用之前的样式
-        });
-    }, 50);
-
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
@@ -252,7 +249,7 @@ async function loadDailyLogs() {
         const date = new Date(log.created_at).toLocaleDateString();
         
         return `
-            <div class="note-card" onclick='openNote(${JSON.stringify(log)})'>
+            <div class="note-card" onclick='handleCardClick(${JSON.stringify(log)}, "daily_logs")'>
                 <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" alt="日常图片">
                 <div class="note-info">
                     <span class="note-tag" style="background:#50fa7b; color:#282a36;">${date}</span>
@@ -274,20 +271,10 @@ async function loadHonors() {
     if (error || !data) return;
 
     grid.innerHTML = data.map(honor => {
-        // 构建详情页展示的 Markdown
-        const enhancedContent = `
-### 🏆 ${honor.title}
-**颁发机构：** ${honor.issuer || '未知'}
-**获奖日期：** ${honor.award_date || '未记录'}
-
----
-${honor.content || '暂无详细描述'}
-        `;
-
-        const detailObject = { ...honor, content: enhancedContent };
-
+        // 🚀 修复点：不再在这里拼接 enhancedContent
+        // 直接把原始数据 honor 传给点击函数
         return `
-            <div class="honor-medal" onclick='openNote(${JSON.stringify(detailObject)})'>
+            <div class="honor-medal" onclick='handleCardClick(${JSON.stringify(honor)}, "honors")'>
                 <img src="${honor.image_url || 'https://via.placeholder.com/80?text=Honor'}" title="${honor.title}">
             </div>
         `;
@@ -303,44 +290,65 @@ function toggleFields() {
 
 // 2. 提交数据到 Supabase
 async function submitPost() {
+    const editId = document.getElementById('edit-id').value;
     const type = document.getElementById('post-type').value;
     const btn = document.getElementById('submit-btn');
     
     // 获取基础数据
-    const postData = {
-        title: document.getElementById('post-title').value.trim(),
-        image_url: document.getElementById('post-image').value.trim(),
-        content: document.getElementById('post-content').value.trim()
-    };
+    let title = document.getElementById('post-title').value.trim();
+    let image_url = document.getElementById('post-image').value.trim();
+    let content = document.getElementById('post-content').value.trim();
 
-    if (!postData.title) {
+    if (!title) {
         alert("标题不能为空哦！");
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = "发布中...";
+    btn.innerText = editId ? "正在保存修改..." : "正在发布...";
 
-    // 根据类型补充特定字段
+    // 准备要提交的数据对象
+    const postData = { title, image_url, content };
+
+    // 🏆 针对不同类型补充特定字段，并处理荣誉内容的自动排版
     if (type === 'notes') {
         postData.category = document.getElementById('post-category').value || '未分类';
     } else if (type === 'honors') {
-        postData.issuer = document.getElementById('post-issuer').value;
+        postData.issuer = document.getElementById('post-issuer').value.trim();
         postData.award_date = document.getElementById('post-date').value;
-    } else if (type === 'daily_logs') {
-        postData.category = '日常';
+        // 🚀 这里再也不需要写 postData.content = `### ...` 了！
     }
 
-    const { error } = await supabaseClient.from(type).insert([postData]);
+    try {
+        let result;
+        if (editId) {
+            // 执行更新
+            result = await supabaseClient
+                .from(type)
+                .update(postData)
+                .eq('id', editId);
+        } else {
+            // 执行新增
+            result = await supabaseClient
+                .from(type)
+                .insert([postData]);
+        }
 
-    if (error) {
-        alert("发布失败：" + error.message);
-    } else {
-        alert("🚀 发布成功！页面即将刷新。");
-        location.reload(); // 刷新页面查看新内容
+        if (result.error) throw result.error;
+
+        alert(editId ? "✅ 内容已成功修改！" : "🚀 新内容发布成功！");
+        
+        // 🚀 状态保持：刷新后依然保持后台开启
+        localStorage.setItem('keep_admin_open', 'true');
+        location.reload(); 
+
+    } catch (err) {
+        console.error("操作失败:", err);
+        alert("出错啦：" + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "立即发布";
     }
-    btn.disabled = false;
-    btn.innerText = "立即发布";
 }
 
 async function uploadToStorage() {
@@ -421,6 +429,127 @@ async function uploadToContent() {
     status.innerText = "✅ 已插入";
 }
 
+// 1. 删除功能
+async function deletePost() {
+    const id = document.getElementById('edit-id').value;
+    const type = document.getElementById('post-type').value;
+    const btn = document.getElementById('delete-btn');
+
+    if (!id) {
+        alert("找不到要删除的 ID，请先点击下方的卡片进入编辑模式。");
+        return;
+    }
+
+    if (confirm("⚠️ 确定要永久删除这条记录吗？此操作不可撤销。")) {
+        btn.disabled = true;
+        btn.innerText = "正在执行删除...";
+
+        try {
+            // 🚀 执行删除
+            const { error } = await supabaseClient
+                .from(type)
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error("删除出错:", error);
+                alert("删除失败：" + error.message + "\n请检查数据库 RLS Policy 是否开启了 DELETE 权限。");
+            } else {
+                alert("🗑️ 删除成功！");
+                // 🚀 关键：告诉浏览器刷新后不要关后台
+                localStorage.setItem('keep_admin_open', 'true');
+                location.reload(); // 强制刷新页面
+            }
+        } catch (err) {
+            alert("发生意外错误：" + err.message);
+        } finally {
+            // 无论成功失败，必须恢复按钮状态，防止死锁
+            btn.disabled = false;
+            btn.innerText = "删除此条内容";
+        }
+    }
+}
+
+// 2. 取消编辑功能 (重置表单)
+function cancelEdit() {
+    document.getElementById('edit-id').value = "";
+    document.getElementById('admin-title').innerText = "🛠️ 内容发布后台";
+    document.getElementById('submit-btn').innerText = "立即发布";
+    
+    // 隐藏删除和取消按钮
+    document.getElementById('delete-btn').style.display = "none";
+    document.getElementById('cancel-btn').style.display = "none";
+    
+    // 清空输入框
+    document.getElementById('post-title').value = "";
+    document.getElementById('post-image').value = "";
+    document.getElementById('post-content').value = "";
+    document.getElementById('post-category').value = "";
+    document.getElementById('post-issuer').value = "";
+    document.getElementById('post-date').value = "";
+    
+    // 重置文件上传状态
+    document.getElementById('upload-status').innerText = "";
+}
+
+// 3. 修改进入编辑模式的逻辑 (需配合之前的 handleCardClick)
+function editPost(data, type) {
+    // 1. 平滑滚动到页面顶部的后台区域
+    document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
+
+    // 2. 更新后台界面状态
+    document.getElementById('admin-title').innerText = "📝 正在修改内容";
+    document.getElementById('submit-btn').innerText = "保存修改";
+    document.getElementById('delete-btn').style.display = "block";
+    document.getElementById('cancel-btn').style.display = "block";
+
+    // 3. 填充基础字段
+    document.getElementById('edit-id').value = data.id;
+    document.getElementById('post-type').value = type; // 自动切换下拉菜单
+    document.getElementById('post-title').value = data.title;
+    document.getElementById('post-image').value = data.image_url;
+    document.getElementById('post-content').value = data.content;
+
+    // 4. 处理不同类型的特有字段
+    toggleFields(); // 先触发一次字段切换显示
+    
+    if (type === 'notes') {
+        document.getElementById('post-category').value = data.category || "";
+    } else if (type === 'honors') {
+        document.getElementById('post-issuer').value = data.issuer || "";
+        document.getElementById('post-date').value = data.award_date || "";
+    }
+}
+
+function handleCardClick(data, type) {
+    const adminPanel = document.getElementById('admin-panel');
+    
+    // 🚀 如果后台面板是展开状态，说明处于“管理模式”
+    if (adminPanel && adminPanel.style.display !== 'none') {
+        // 弹出确认，防止误触进入编辑
+        if (confirm(`📝 要编辑这条“${data.title}”的内容吗？`)) {
+            editPost(data, type);
+        }
+    } else {
+        // 🚀 否则就是普通用户模式，直接预览
+        openNote(data);
+    }
+}
+
+function logoutAdmin() {
+    if (confirm("确定要退出管理模式并刷新页面吗？")) {
+        // 1. 清除标记，这样刷新后就不会再开了
+        localStorage.removeItem('keep_admin_open');
+        
+        // 2. 隐藏面板（虽然刷新会自动隐藏，但这样体验更好）
+        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('thought-section').style.display = 'none';
+        
+        // 3. 刷新页面恢复普通用户视图
+        location.reload();
+    }
+}
+
 // ==================== 4. 页面启动器 (唯一的入口) ====================
 window.onload = async () => {
     // 恢复夜间模式
@@ -434,17 +563,25 @@ window.onload = async () => {
     const savedName = localStorage.getItem('saved_username');
     if (savedName && nameInput) nameInput.value = savedName;
 
+    // 2. 🚀 检查是否需要自动维持后台状态
+    if (localStorage.getItem('keep_admin_open') === 'true') {
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('thought-section').style.display = 'block';
+        loadThoughts();
+        // 注意：这里不要删除标记，因为用户可能还要继续连着发
+    }
+
     // 🚀 核心解锁逻辑：监听名字输入框
     if (nameInput) {
         nameInput.addEventListener('input', (e) => {
             const code = e.target.value.trim();
             if (code === "admin") { // 这里就是你的暗号
-                const section = document.getElementById('thought-section');
                 
                 // 1. 先解锁显示
-                section.style.display = 'block';
+                document.getElementById('thought-section').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
                 loadThoughts();
+                loadComments();
                 
                 // 2. 清空暗号并弹窗
                 e.target.value = ""; 
