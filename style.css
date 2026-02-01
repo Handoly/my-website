@@ -510,3 +510,14 @@ input[type="file"]:hover {
     background: #ff6b81;
     transform: scale(1.05);
 }
+
+/* 图片加载前的占位样式 */
+img {
+    background: #f0f0f0; /* 给一个浅灰底色 */
+    transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* 图片还没下完时，稍微模糊一点，看起来像是在加载 */
+img:not([src]) {
+    opacity: 0;
+}

@@ -139,7 +139,7 @@ async function loadNotes(category = 'all') {
 
     grid.innerHTML = data.map(note => `
         <div class="note-card" onclick='handleCardClick(${JSON.stringify(note)}, "notes")'>
-            <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" alt="预览">
+            <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" loading="lazy" alt="预览">
             <div class="note-info">
                 <span class="note-category">${note.category}</span>
                 <h5>${note.title}</h5>
@@ -181,7 +181,7 @@ ${note.content || '暂无详细描述'}`;
     const renderedContent = marked.parse(displayContent, { breaks: true });
 
     body.innerHTML = `
-        <div class="modal-image-container">
+        <div class="modal-image-container" style="background: #f0f0f0; min-height: 200px;">
             <img src="${note.image_url}" class="modal-detail-img" onclick="openImageViewer(this.src)">
         </div>
         <div class="modal-info-content">
@@ -259,7 +259,7 @@ async function loadDailyLogs() {
         
         return `
             <div class="note-card" onclick='handleCardClick(${JSON.stringify(log)}, "daily_logs")'>
-                <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" alt="日常图片">
+                <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" loading="lazy" alt="日常图片">
                 <div class="note-info">
                     <span class="note-tag" style="background:#50fa7b; color:#282a36;">${date}</span>
                     <h5>${log.title}</h5>
