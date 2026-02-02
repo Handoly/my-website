@@ -269,6 +269,13 @@ function openNote(note) {
     document.body.style.overflow = 'hidden';
 }
 
+function handleOverlayClick(event) {
+    // 只有点击的是 overlay 本身（背景），而不是它里面的子元素时，才关闭
+    if (event.target.classList.contains('modal-overlay')) {
+        closeNote();
+    }
+}
+
 function closeNote() {
     document.getElementById('note-modal').style.display = 'none';
     document.body.style.overflow = 'auto';

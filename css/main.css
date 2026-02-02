@@ -237,11 +237,16 @@ body.dark-mode .thought-item {
 
 /* 关闭按钮 */
 .close-modal {
-    position: absolute;
-    top: 15px; right: 20px;
-    font-size: 28px;
+    position: sticky; /* 🚀 核心修改：粘性定位 */
+    top: 10px;        /* 距离弹窗顶部边缘的距离 */
+    float: right;     /* 让它往右靠 */
+    z-index: 1001;    /* 确保它在内容之上 */
+    
+    /* 你原本的样式 */
+    font-size: 60px;  /* 建议稍微调小一点，60px有点太大了 */
     cursor: pointer;
-    color: var(--tag-text);
+    color: red;
+    margin-right: 15px; /* 右侧留点间距 */
 }
 
 /* 详情页内的文字排版 */
