@@ -12,10 +12,12 @@
   <title>邓万穿的个人主页</title>
   <!-- CSS -->
   <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <!-- Third-party libs -->
   <script src="https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://lib.baomitu.com/marked/4.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 
 <body>
@@ -51,7 +53,7 @@
     <h1>你好，我是邓万穿</h1>
 
     <div class="profile-box">
-      <img src="https://picsum.photos/seed/d/200" alt="我的头像" class="avatar">
+      <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="我的头像" class="avatar">
     </div>
 
     <p>这是一个 HTML 初学者的练习作品。</p>
@@ -88,7 +90,7 @@
 
     <!-- Daily Logs -->
     <section class="container">
-      <h3>📅 邓万穿的日常</h3>
+      <h3>📅 日常</h3>
 
       <div id="daily-grid" class="notes-grid">
         <p style="text-align:center;color:#888;grid-column:1/-1;">
@@ -112,7 +114,7 @@
 
     <!-- Comment Section -->
     <section class="container">
-      <h3>📬 给我留言</h3>
+      <h3>📬 留言|碎碎念</h3>
 
       <form onsubmit="addComment(); return false;">
         <input type="text" id="name-input" placeholder="你的名字" required>
@@ -121,7 +123,7 @@
       </form>
 
       <div id="comment-list" class="comment-section">
-        <h4>💬 留言展示：</h4>
+        <h4>💬 留言|碎碎念展示：</h4>
 
         <div id="comments-container">
           <p class="empty-hint">暂无留言....</p>

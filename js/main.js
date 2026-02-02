@@ -240,6 +240,15 @@ function openNote(note) {
     const body = document.getElementById('modal-body');
     let displayContent = note.content || '暂无详细描述';
     
+    // 1. 配置 marked 的高亮逻辑（只需配置一次，写在这里也很稳妥）
+    marked.setOptions({
+        highlight: function(code, lang) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+        },
+        langPrefix: 'hljs language-' // 必须匹配 highlight.js 的 CSS 类名
+    });
+
     // 荣誉模板动态渲染
     if (note.issuer || note.award_date) {
         displayContent = `### 🏆 ${note.title}\n**颁发机构：** ${note.issuer || '未知'}\n**获奖日期：** ${note.award_date || '未记录'}\n---\n${note.content || '暂无详细描述'}`;
@@ -258,10 +267,17 @@ function openNote(note) {
         </div>
     `;
 
-    // 绑定正文图片点击放大
+    // 2. 渲染后：处理图片放大和代码高亮
+    // 我们把逻辑都放进这个 setTimeout 里，确保 DOM 已经加载完成
     setTimeout(() => {
+        // 绑定正文图片点击放大
         body.querySelectorAll('.modal-detail-text img').forEach(img => {
             img.onclick = () => openImageViewer(img.src);
+        });
+
+        // 🚀 核心逻辑：触发代码块高亮
+        body.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
         });
     }, 100);
 
@@ -455,6 +471,12 @@ function filterNotes(cat) {
     loadNotes(cat);
 }
 
+// 触发文件选择的逻辑
+function openAvatarSelector() {
+    // 找到我们准备好的隐藏 input (见下方 HTML)
+    document.getElementById('avatarInput').click();
+}
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
@@ -478,6 +500,21 @@ window.onload = async () => {
             if (e.target.value.trim() === "admin") {
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('thought-section').style.display = 'block';
+
+                // 1. 获取头像的容器 div
+                const profileBox = document.querySelector('.profile-box');
+                if (profileBox) {
+                        // 2. 动态添加 onclick 属性
+                        // 这里指向我们定义的打开上传文件的函数
+                        profileBox.setAttribute('onclick', 'uploadToStorage()');
+                        
+                        // 3. 顺便改个样式，让管理员知道这里可以点了
+                        profileBox.style.cursor = 'pointer';
+                        profileBox.title = '点击更换头像';
+                        
+                        console.log("已进入管理模式：头像点击功能已激活");
+                    }
+
                 loadThoughts();
                 loadComments();
                 e.target.value = "";

@@ -1,6 +1,8 @@
 /* ==================== 1. 变量系统 ==================== */
 :root {
-    --primary-color: #008CBA;
+    /* --primary-color: #008CBA; */
+    --bg-image: url('https://images.pexels.com/photos/33673336/pexels-photo-33673336.jpeg');
+    --primary-color: #ba0000;
     --bg-color: #f0f8ff;
     --card-bg: white;
     --text-color: #333;
@@ -15,7 +17,8 @@
 }
 
 body.dark-mode {
-    --primary-color: #3b82f6;
+    /* --primary-color: #3b82f6; */
+    --primary-color: #ba0000;
     --bg-color: #1a1a1a;
     --card-bg: #2d2d2d;
     --text-color: #eee;
@@ -30,6 +33,13 @@ body.dark-mode {
 
 /* ==================== 2. 全局基础样式 ==================== */
 body {
+    background-image: var(--bg-image);
+    /* 关键设置：确保图片铺满且不重复 */
+    background-size: cover;         /* 核心：缩放图片以完全覆盖容器 */
+    background-position: center;    /* 图片居中显示 */
+    background-attachment: fixed;   /* 可选：背景固定，不随页面滚动（很有高级感） */
+    background-repeat: no-repeat;   /* 不重复 */
+
     margin: 0; padding: 0;
     font-family: "微软雅黑", sans-serif;
     background-color: var(--bg-color);
@@ -91,7 +101,7 @@ body {
 .avatar {
     width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
     border: 3px solid var(--primary-color);
-    box-shadow: 0 0 15px var(--primary-color);
+    box-shadow: 0 0 50px var(--primary-color);
     transition: all 0.5s ease;
 }
 .avatar:hover {
@@ -353,6 +363,13 @@ body.dark-mode .thought-item {
 }
 
 /* Markdown 专属排版美化 */
+/* 减小 Markdown 段落之间的上下间距 */
+.markdown-body p {
+    margin-top: -0.2em !important;   /* 原来可能是 1em 或更高 */
+    margin-bottom: -1em !important;
+    line-height: 1.6;               /* 控制行与行之间的距离 */
+}
+
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
     margin-top: 20px;
     margin-bottom: 10px;
@@ -369,22 +386,17 @@ body.dark-mode .thought-item {
     margin-bottom: 5px;
 }
 
-/* 🚀 代码块美化：针对 FPGA 或前端代码 */
-.markdown-body code {
-    background-color: var(--tag-bg);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9em;
-}
-
 .markdown-body pre {
-    background-color: #2d2d2d;
-    color: #ccc;
+    /* 不要在这里设置 background-color，让 hljs 主题控制 */
     padding: 15px;
     border-radius: 8px;
     overflow-x: auto;
-    text-align: left;
+    line-height: 1.5; /* 让代码行间距更舒服 */
+}
+
+.markdown-body code {
+    /* 这里的 code 指的是行内代码 `like this` */
+    font-family: 'Consolas', 'Monaco', monospace;
 }
 
 /* 让日常板块的卡片带一点青色边框，区分于笔记的紫色 */
