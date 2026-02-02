@@ -416,6 +416,15 @@ function toggleFields() {
     document.getElementById('note-fields').style.display = (type === 'notes' || type === 'tips') ? 'block' : 'none';
 }
 
+// 2. 切换分类点击处理器
+function filterNotes(cat) {
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.classList.remove('active');
+        if(tag.innerText === cat || (cat === 'all' && tag.innerText === '全部')) tag.classList.add('active');
+    });
+    loadNotes(cat);
+}
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
