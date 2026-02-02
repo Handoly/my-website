@@ -6,6 +6,14 @@ const SUPABASE_KEY = 'sb_publishable_jFyW8ThJemLJHIbzIK085Q_cxmOnNxG';
 const lib = window.supabase || supabase;
 const supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 总仓库，用来装不同类型的数据
+window.dataStorage = {
+    notes: [],
+    honors: [],
+    tips: [],
+    daily_logs: []
+};
+
 // ==================== 2. 图片压缩核心引擎 ====================
 /**
  * 核心：将图片压缩并转为 WebP 格式
@@ -150,8 +158,12 @@ async function loadNotes(category = 'all') {
     const { data, error } = await query;
     if (error) return;
 
+    // 🚀 第一处修改：将获取到的所有数据存入全局变量
+    // 这样 handleCardClick 就能通过 ID 在内存里找到完整对象
+    window.dataStorage.notes = data; 
+
     grid.innerHTML = data.map(note => `
-        <div class="note-card" onclick='handleCardClick(${JSON.stringify(note)}, "notes")'>
+        <div class="note-card" onclick="handleCardClick('${note.id}', 'notes')">
             <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" loading="lazy" alt="预览">
             <div class="note-info">
                 <span class="note-category">${note.category}</span>
@@ -170,8 +182,10 @@ async function loadDailyLogs() {
         return;
     }
 
+    window.dataStorage.daily_logs = data; // 存入全局变量
+
     grid.innerHTML = data.map(log => `
-        <div class="note-card" onclick='handleCardClick(${JSON.stringify(log)}, "daily_logs")'>
+        <div class="note-card" onclick="handleCardClick('${log.id}', 'daily_logs')">
             <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" loading="lazy" alt="日常">
             <div class="note-info">
                 <span class="note-tag" style="background:#50fa7b; color:#282a36;">${new Date(log.created_at).toLocaleDateString()}</span>
@@ -192,8 +206,10 @@ async function loadTips() {
         return;
     }
 
+    window.dataStorage.tips = data; // 存入全局变量
+
     grid.innerHTML = data.map(tip => `
-        <div class="note-card" onclick='handleCardClick(${JSON.stringify(tip)}, "tips")'>
+        <div class="note-card" onclick="handleCardClick('${tip.id}', 'tips')">
             <img src="${tip.image_url || 'https://via.placeholder.com/150?text=Tips'}" loading="lazy" alt="小知识">
             <div class="note-info">
                 <span class="note-tag" style="background:#8be9fd; color:#282a36;">💡 知识点</span>
@@ -208,8 +224,10 @@ async function loadHonors() {
     const { data, error } = await supabaseClient.from('honors').select('*').order('award_date', { ascending: false });
     if (error || !data) return;
 
+    window.dataStorage.honors = data; // 存入全局变量
+
     grid.innerHTML = data.map(honor => `
-        <div class="honor-medal" onclick='handleCardClick(${JSON.stringify(honor)}, "honors")'>
+        <div class="honor-medal" onclick="handleCardClick('${honor.id}', 'honors')">
             <img src="${honor.image_url || 'default-icon.png'}" title="${honor.title}" loading="lazy">
         </div>
     `).join('');
@@ -365,12 +383,17 @@ async function submitPost() {
 
 // ==================== 8. 管理逻辑 ====================
 
-function handleCardClick(data, type) {
+function handleCardClick(id, type) {
+    // 🚀 从仓库里根据 ID 找到对应的那条数据
+    const data = window.dataStorage[type].find(item => item.id === id);
+    
+    if (!data) return; // 防护：万一没找到
+
     const adminPanel = document.getElementById('admin-panel');
     if (adminPanel && adminPanel.style.display !== 'none') {
         if (confirm(`📝 编辑“${data.title}”？`)) editPost(data, type);
     } else {
-        openNote(data);
+        openNote(data); // 这里的 data 依然是完整的对象，openNote 函数不用动
     }
 }
 

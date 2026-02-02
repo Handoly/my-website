@@ -520,7 +520,6 @@ input[type="file"]:hover {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
     margin-top: 15px;
-<<<<<<< HEAD
 }
 
 /* Tips 卡片视觉区分：使用专属青蓝色边框 */
@@ -584,9 +583,6 @@ body.dark-mode #tips-grid .note-card {
 #tips-grid .note-tag {
     color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
 } 
- 
-=======
-}
 
 /* Tips 卡片视觉区分：使用专属青蓝色边框 */
 #tips-grid .note-card {
@@ -649,5 +645,3 @@ body.dark-mode #tips-grid .note-card {
 #tips-grid .note-tag {
     color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
 }
-
->>>>>>> 8a6b3e22284c2da6e463cba82195c63ee62b737c
