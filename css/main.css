@@ -4,9 +4,9 @@
     --bg-image: url('https://images.pexels.com/photos/33673336/pexels-photo-33673336.jpeg');
     --primary-color: #ba0000;
     --bg-color: #f0f8ff;
-    --card-bg: white;
-    --text-color: #333;
-    --nav-bg: white;
+    --card-bg: rgb(253, 253, 253);
+    --text-color: #000000;
+    --nav-bg: rgb(255, 255, 255);
     --input-bg: white;
     --input-border: #ddd;
     --tag-bg: #f0f0f0;
@@ -14,6 +14,59 @@
     --footer-line: #eee;
     --shadow: 0 5px 15px rgba(0,0,0,0.05);
     --thought-orange: #ff9800;
+}
+
+/* 定义闪烁动画 */
+@keyframes blink-opacity {
+    /* 动画关键帧：0%、50%、100% 是动画的三个节点 */
+    0% {
+        opacity: 1; /* 完全显示 */
+    }
+    50% {
+        opacity: 0; /* 完全隐藏（可改为 0.5 实现半闪烁，不那么刺眼） */
+    }
+    100% {
+        opacity: 1; /* 回到完全显示，形成循环 */
+    }
+}
+
+/* 给需要闪烁的文字添加样式和动画 */
+.blink-text {
+    /* 调用动画：动画名称 持续时间 循环次数 运动曲线 */
+    animation: blink-opacity 0.6s infinite ease-in-out;
+}
+
+.settings-toggle {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* 设置面板样式 */
+.settings-panel {
+    position: fixed;
+    right: -300px; /* 初始隐藏 */
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.settings-panel.active { right: 0; }
+
+.setting-item {
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 body.dark-mode {
@@ -46,6 +99,15 @@ body {
     color: var(--text-color);
     text-align: center;
     transition: all 0.5s ease;
+        /* 英文在前（手写感），中文在后（圆润感） */
+    font-family: 
+        'Comic Sans MS',        /* 英文：经典非正式字体 */
+        'Finger Paint',         /* 英文：更有艺术感（需从Google Fonts引入） */
+        /*'ZCOOL KuaiLe',         /* 中文：站酷快乐体 */
+        'Ma Shan Zheng',        /* 中文：马善政毛笔体 */
+        'Microsoft YaHei UI',   /* 备选 */
+        'cursive',              /* 最后的兜底：草书/手写类 */
+        sans-serif;
 }
 
 #loading-screen {
@@ -364,21 +426,52 @@ body.dark-mode .thought-item {
 
 /* Markdown 专属排版美化 */
 /* 减小 Markdown 段落之间的上下间距 */
+.markdown-body {
+    /* 英文在前（手写感），中文在后（圆润感） */
+    font-family: 
+        'Comic Sans MS',        /* 英文：经典非正式字体 */
+        'Finger Paint',         /* 英文：更有艺术感（需从Google Fonts引入） */
+        'ZCOOL KuaiLe',         /* 中文：站酷快乐体 */
+        'Ma Shan Zheng',        /* 中文：马善政毛笔体 */
+        'Microsoft YaHei UI',   /* 备选 */
+        'cursive',              /* 最后的兜底：草书/手写类 */
+        sans-serif;
+}
+
 .markdown-body p {
     margin-top: -0.2em !important;   /* 原来可能是 1em 或更高 */
     margin-bottom: -1em !important;
     line-height: 1.6;               /* 控制行与行之间的距离 */
 }
 
-.markdown-body h1, .markdown-body h2, .markdown-body h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: var(--primary-color);
+.markdown-body h1{
+    margin-top: 0px;
+    margin-bottom: -20px;
+    color: #ba0000;
+}
+
+.markdown-body h2{
+    margin-top: 0px;
+    margin-bottom: -20px;
+    color: #a004ac;
+}
+
+div.markdown-body h3 {
+    margin-top: 0px;
+    margin-bottom: -20px;
+    color:  #028714;
+}
+
+div.markdown-body h4 {
+    margin-top: 0px;
+    margin-bottom: -20px;
+    color:  #963c00;
 }
 
 .markdown-body ul, .markdown-body ol {
     padding-left: 20px;
     text-align: left;
+    margin-top: -10px;
     margin-bottom: -50px;
 }
 
@@ -389,10 +482,11 @@ body.dark-mode .thought-item {
 
 .markdown-body pre {
     /* 不要在这里设置 background-color，让 hljs 主题控制 */
-    padding: 15px;
+    padding: 0px;
     border-radius: 8px;
     overflow-x: auto;
     line-height: 1.5; /* 让代码行间距更舒服 */
+    margin-bottom: -1em;
 }
 
 .markdown-body code {

@@ -243,10 +243,10 @@ function openNote(note) {
     // 1. 配置 marked 的高亮逻辑（只需配置一次，写在这里也很稳妥）
     marked.setOptions({
         highlight: function(code, lang) {
-            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            const language = (lang || hljs.getLanguage(lang)) ? lang : 'plaintext';
             return hljs.highlight(code, { language }).value;
         },
-        langPrefix: 'hljs language-' // 必须匹配 highlight.js 的 CSS 类名
+        langPrefix: 'hljs ' // 必须匹配 highlight.js 的 CSS 类名
     });
 
     // 荣誉模板动态渲染
@@ -266,7 +266,7 @@ function openNote(note) {
             <div class="modal-detail-text markdown-body">${renderedContent}</div>
         </div>
     `;
-
+    smartTypeWriter('.modal-detail-title', 150, false); // 标题打字机效果
     // 2. 渲染后：处理图片放大和代码高亮
     // 我们把逻辑都放进这个 setTimeout 里，确保 DOM 已经加载完成
     setTimeout(() => {
@@ -471,10 +471,113 @@ function filterNotes(cat) {
     loadNotes(cat);
 }
 
-// 触发文件选择的逻辑
-function openAvatarSelector() {
-    // 找到我们准备好的隐藏 input (见下方 HTML)
-    document.getElementById('avatarInput').click();
+// 将逻辑封装成函数，放在 window.onload 外面，保持代码整洁
+function initThemePicker() {
+    const configs = [
+        { id: 'primary-picker', var: '--primary-color', storage: 'theme-primary' },
+        { id: 'card-bg-picker', var: '--card-bg', storage: 'theme-card' },
+        { id: 'nav-bg-picker', var: '--nav-bg', storage: 'theme-nav' },
+        { id: 'text-picker', var: '--text-color', storage: 'theme-text' }
+    ];
+
+    // 初始化：从 LocalStorage 加载
+    configs.forEach(item => {
+        const saved = localStorage.getItem(item.storage);
+        const picker = document.getElementById(item.id);
+        if (saved) {
+            document.documentElement.style.setProperty(item.var, saved);
+            picker.value = saved;
+        }
+        
+        // 监听输入
+        picker.addEventListener('input', (e) => {
+            const val = e.target.value;
+            document.documentElement.style.setProperty(item.var, val);
+            localStorage.setItem(item.storage, val);
+        });
+    });
+
+    // 面板开关逻辑
+    const panel = document.getElementById('settings-panel');
+    document.getElementById('settings-toggle').onclick = () => panel.classList.toggle('active');
+
+    // --- 新增：重置主题逻辑 ---
+    const resetBtn = document.getElementById('reset-theme');
+    
+    // 定义你的初始默认值
+    const defaults = {
+        '--primary-color': '#ba0000',
+        '--card-bg': '#ffffff',
+        '--nav-bg': '#f6f8fa',
+        '--text-color': '#000000'
+    };
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            // 1. 遍历并恢复默认值
+            configs.forEach(item => {
+                const defaultValue = defaults[item.var];
+                
+                // 修改 CSS 变量
+                document.documentElement.style.setProperty(item.var, defaultValue);
+                
+                // 恢复选择器的颜色显示
+                const picker = document.getElementById(item.id);
+                if (picker) picker.value = defaultValue;
+                
+                // 清除本地存储
+                localStorage.removeItem(item.storage);
+            });
+            
+            console.log("主题已重置为默认设置");
+        });
+    }
+
+    // 点击外部关闭面板
+    document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && e.target.id !== 'settings-toggle') {
+            panel.classList.remove('active');
+        }
+    });
+}
+
+/**
+ * 通用打字机函数（支持循环打印）
+ * @param {HTMLElement|string} target - 可以是 DOM 对象，也可以是 CSS 选择器 (如 '.intro')
+ * @param {number} speed - 打字速度
+ * @param {number} loopDelay - 打印完成后，延迟多久重新开始（默认 1000 毫秒，即 1 秒）
+ */
+function smartTypeWriter(target, speed = 100, isLoop = false, loopDelay = 10000) {
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!element) return;
+
+    // 1. 保存原始文本（只获取一次，避免后续清空后丢失）
+    const originalText = element.innerText;
+    element.innerText = '';
+    element.style.visibility = 'visible';
+
+    let i = 0;
+
+    // 2. 封装打字逻辑为独立函数，方便重复调用
+    function typing() {
+        if (i < originalText.length) {
+            element.innerText += originalText.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        } else {
+            // 3. 打字完成后，延迟一段时间再重置并重启
+            if (isLoop) {
+                setTimeout(() => {
+                    element.innerText = '';
+                    i = 0;
+                    typing();
+                }, loopDelay);
+            }
+        }
+    }
+
+    // 启动首次打字
+    typing();
 }
 
 // ==================== 9. 初始化启动 ====================
@@ -528,6 +631,13 @@ window.onload = async () => {
     // 实时更新留言
     supabaseClient.channel('comments').on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => loadComments()).subscribe();
 
+    initThemePicker();
+
     const loader = document.getElementById('loading-screen');
-    if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 500); }
+    if (loader) { 
+        loader.style.opacity = '0'; 
+        setTimeout(() => loader.style.display = 'none', 500); 
+    }
+
+    smartTypeWriter('.typewriter-text', 150, true, 10000);
 }; 
