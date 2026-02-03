@@ -12,28 +12,94 @@
     --tag-bg: #f0f0f0;
     --tag-text: #666;
     --footer-line: #eee;
-    --shadow: 0 5px 15px rgba(0,0,0,0.05);
+    --shadow: 0 5px 15px rgba(0,0,0,0.1);
     --thought-orange: #ff9800;
 }
 
-/* 定义闪烁动画 */
-@keyframes blink-opacity {
-    /* 动画关键帧：0%、50%、100% 是动画的三个节点 */
-    0% {
-        opacity: 1; /* 完全显示 */
-    }
-    50% {
-        opacity: 0; /* 完全隐藏（可改为 0.5 实现半闪烁，不那么刺眼） */
-    }
-    100% {
-        opacity: 1; /* 回到完全显示，形成循环 */
-    }
+body.dark-mode {
+    /* --primary-color: #3b82f6; */
+    --primary-color: #ba0000;
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --text-color: #eee;
+    --nav-bg: #2d2d2d;
+    --input-bg: #444;
+    --input-border: #555;
+    --tag-bg: rgba(255, 255, 255, 0.1);
+    --tag-text: #aaa;
+    --footer-line: #444;
+    --shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
 
-/* 给需要闪烁的文字添加样式和动画 */
-.blink-text {
-    /* 调用动画：动画名称 持续时间 循环次数 运动曲线 */
-    animation: blink-opacity 0.6s infinite ease-in-out;
+/* ==================== 2. 全局基础样式 ==================== */
+body {
+    background-image: var(--bg-image);
+    background-size: cover;         /* 核心：缩放图片以完全覆盖容器 */
+    background-position: center;    /* 图片居中显示 */
+    background-attachment: fixed;   /* 可选：背景固定，不随页面滚动（很有高级感） */
+    background-repeat: no-repeat;   /* 不重复 */
+
+    margin: 0; padding: 0;
+    /* font-family: "微软雅黑", sans-serif; */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    text-align: center;
+    transition: all 0.5s ease;
+        /* 英文在前（手写感），中文在后（圆润感） */
+    font-family: 
+        'Comic Sans MS',        /* 英文：经典非正式字体 */
+        'Finger Paint',         /* 英文：更有艺术感（需从Google Fonts引入） */
+        /*'ZCOOL KuaiLe',         /* 中文：站酷快乐体 */
+        'Ma Shan Zheng',        /* 中文：马善政毛笔体 */
+        'Microsoft YaHei UI',   /* 备选 */
+        'cursive',              /* 最后的兜底：草书/手写类 */
+        sans-serif;
+}
+
+#loading-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    z-index: 9999;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transition: opacity 2s ease;
+}
+
+.loading-title { font-size: 24px; margin-bottom: 15px; font-weight: bold; }
+.loading-sub { color: var(--tag-text); opacity: 0.8; }
+.loading-spinner {
+    width: 40px; height: 40px;
+    border: 4px solid var(--tag-bg);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 20px;
+}
+
+@keyframes spin { 
+    from { 
+        transform: rotate(0deg); 
+    } 
+    to { 
+        transform: rotate(360deg); 
+    } 
+}
+
+.navbar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    background-color: var(--nav-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0 20px; box-sizing: border-box; z-index: 1000;
+}
+
+.logo { 
+    font-size: 20px; 
+    font-weight: bold; 
+    color: var(--primary-color); 
 }
 
 .settings-toggle {
@@ -60,7 +126,9 @@
     z-index: 1000;
 }
 
-.settings-panel.active { right: 0; }
+.settings-panel.active { 
+    right: 0; /* 显示面板 */
+}
 
 .setting-item {
     margin: 20px 0;
@@ -69,106 +137,254 @@
     align-items: center;
 }
 
-body.dark-mode {
-    /* --primary-color: #3b82f6; */
-    --primary-color: #ba0000;
-    --bg-color: #1a1a1a;
-    --card-bg: #2d2d2d;
-    --text-color: #eee;
-    --nav-bg: #2d2d2d;
-    --input-bg: #444;
-    --input-border: #555;
-    --tag-bg: rgba(255, 255, 255, 0.1);
-    --tag-text: #aaa;
-    --footer-line: #444;
-    --shadow: 0 5px 20px rgba(0,0,0,0.3);
+.hamburger { 
+    display: none; 
+    font-size: 24px; 
+    cursor: pointer; 
 }
-
-/* ==================== 2. 全局基础样式 ==================== */
-body {
-    background-image: var(--bg-image);
-    /* 关键设置：确保图片铺满且不重复 */
-    background-size: cover;         /* 核心：缩放图片以完全覆盖容器 */
-    background-position: center;    /* 图片居中显示 */
-    background-attachment: fixed;   /* 可选：背景固定，不随页面滚动（很有高级感） */
-    background-repeat: no-repeat;   /* 不重复 */
-
-    margin: 0; padding: 0;
-    font-family: "微软雅黑", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    text-align: center;
-    transition: all 0.5s ease;
-        /* 英文在前（手写感），中文在后（圆润感） */
-    font-family: 
-        'Comic Sans MS',        /* 英文：经典非正式字体 */
-        'Finger Paint',         /* 英文：更有艺术感（需从Google Fonts引入） */
-        /*'ZCOOL KuaiLe',         /* 中文：站酷快乐体 */
-        'Ma Shan Zheng',        /* 中文：马善政毛笔体 */
-        'Microsoft YaHei UI',   /* 备选 */
-        'cursive',              /* 最后的兜底：草书/手写类 */
-        sans-serif;
-}
-
-#loading-screen {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    z-index: 9999;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    transition: opacity 0.5s ease;
-}
-
-.loading-title { font-size: 24px; margin-bottom: 15px; font-weight: bold; }
-.loading-sub { color: var(--tag-text); opacity: 0.8; }
-.loading-spinner {
-    width: 40px; height: 40px;
-    border: 4px solid var(--tag-bg);
-    border-top: 4px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-top: 20px;
-}
-
-/* ==================== 3. 导航与布局 ==================== */
-.navbar {
-    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-    background-color: var(--nav-bg);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 20px; box-sizing: border-box; z-index: 1000;
-}
-
-.nav-spacer { height: 80px; }
-
-.logo { font-size: 20px; font-weight: bold; color: var(--primary-color); }
 
 .menu a {
-    text-decoration: none; color: var(--text-color);
-    margin-left: 20px; font-size: 14px; transition: color 0.3s;
+    text-decoration: none; 
+    color: var(--text-color);
+    margin-left: 20px; 
+    font-size: 14px; 
+    transition: color 1s;
 }
-.menu a:hover { color: var(--primary-color); }
+
+.menu a:hover { 
+    color: var(--primary-color); 
+}
 
 #theme-btn { border: none; background: transparent; cursor: pointer; font-size: 18px; margin-left: 20px; }
 
-.container {
-    width: 90%; max-width: 500px; margin: 20px auto;
-    background: var(--card-bg); padding: 20px;
-    border-radius: 10px; text-align: left; box-shadow: var(--shadow);
+@media (max-width: 768px) {
+    .hamburger { 
+        display: block; /*在手机上让菜单按钮显示，仅此作用，block功能被flex覆盖*/
+    }
+    .menu {
+        display: none; 
+        flex-direction: column; 
+        position: absolute;
+        top: 60px; 
+        left: 0; 
+        width: 100%; 
+        background-color: var(--nav-bg);
+        box-shadow: 0 5px 5px rgba(0,0,0,0.5); 
+        padding: 20px 0;
+    }
+    .menu.active { 
+        display: flex; 
+    }
+    .menu a { 
+        margin: 10px 0; 
+        /* display: block;  */
+        font-size: 18px; 
+    }
 }
 
-/* ==================== 4. 头像样式 (恢复正常) ==================== */
-.profile-box { display: inline-block; position: relative; padding: 10px; }
+.nav-spacer { 
+    height: 80px; 
+    /* 用于占位，防止内容被固定导航栏遮挡 */
+}
+
+.intro-text {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.profile-box { 
+    display: inline-block; 
+    position: relative; 
+    padding: 10px; 
+}
+
 .avatar {
-    width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
+    width: 150px; 
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 50%;
     border: 3px solid var(--primary-color);
-    box-shadow: 0 0 50px var(--primary-color);
+    box-shadow: 0 0px 50px var(--primary-color);
     transition: all 0.5s ease;
 }
+
 .avatar:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px var(--primary-color);
+}
+
+.typewriter-text {
+    margin: auto; 
+    width: 70%; 
+    display:flex; 
+    justify-content: center; 
+    color: aliceblue;
+}
+
+.container {
+    width: 85%; 
+    /* max-width: 500px;  */
+    margin: 20px auto;
+    background: var(--card-bg); 
+    padding: 20px;
+    border-radius: 10px; 
+    text-align: left; 
+    box-shadow: var(--shadow);
+}
+
+/* 荣誉墙网格 - 修复右侧空白问题 */
+.honors-grid {
+    display: grid;
+    /* 核心修改：使用 repeat(auto-fit) 让系统自动填充空间 */
+    /* minmax(80px, 1fr) 保证最小 80px，剩下的空间由所有勋章平分 */
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px;      
+    margin-top: 15px;
+    justify-items: flex-end; /* 勋章在格子内居中 */
+    width: 100%;    /* 确保容器占满宽度 */
+}
+
+/* 勋章样式微调 */
+.honor-medal {
+    /* 删掉原来的固定的 width: 80px */
+    width: 100%;      /* 宽度随格子缩放 */
+    max-width: 100px; /* 但限制一个最大宽度，防止平板上变得巨宽 */
+    aspect-ratio: 1 / 1; /* 强制保持正方形 */
+    
+    background: var(--card-bg);
+    border-radius: 15px; 
+    border: 2px solid #ffd700; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.honor-medal:hover {
+    transform: scale(1.15) rotate(5deg); /* 悬停时放大并轻微旋转，增加灵动感 */
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+    z-index: 10;
+}
+
+.honor-medal img {
+    width: 80%;  /* 图片不占满，留出一点呼吸感 */
+    height: 80%;
+    object-fit: contain; /* 保证证书/奖杯完整显示 */
+    filter: drop-shadow(0px 0px 10px rgba(0,0,0,0.2)); /* 给图片加点阴影，更有层次感 */
+}
+
+/* 手机端适配：如果屏幕太窄，勋章稍微缩小一点 */
+@media (max-width: 480px) {
+    .honor-medal {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+.note-grid > p {
+    text-align:center;
+    color:#888;
+    grid-column:1/-1;
+}
+
+/* 过滤器样式 */
+.filter-bar { 
+    margin-bottom: 10px; 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap; 
+}
+
+.filter-tag {
+    font-size: 12px; 
+    padding: 4px 10px; 
+    cursor: pointer;
+    background: var(--tag-bg); 
+    border-radius: 20px;
+}
+
+.filter-tag.active { 
+    background: var(--primary-color); 
+    color: white; 
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 自动适配手机和电脑 */
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.note-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.note-card:hover { 
+    transform: translateY(-5px); 
+}
+
+.note-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover; /* 保证图片不失真 */
+}
+
+.note-info { 
+    padding: 8px; 
+}
+
+.note-info h5 { 
+    margin: 0; 
+    font-size: 14px; 
+}
+
+.note-tag { 
+    font-size: 10px; 
+    background: var(--primary-color); 
+    color: white; 
+    padding: 2px 5px; 
+    border-radius: 3px; 
+}
+
+.note-category {
+    background: #bd93f9;
+    color:#282a36;
+}
+
+.dailylog-date {
+    background:#50fa7b; 
+    color:#282a36;
+}
+
+.tips {
+    background:#8be9fd; 
+    color:#282a36;
+}
+
+/* 定义闪烁动画 */
+@keyframes blink-opacity {
+    /* 动画关键帧：0%、50%、100% 是动画的三个节点 */
+    0% {
+        opacity: 1; /* 完全显示 */
+    }
+    50% {
+        opacity: 0; /* 完全隐藏（可改为 0.5 实现半闪烁，不那么刺眼） */
+    }
+    100% {
+        opacity: 1; /* 回到完全显示，形成循环 */
+    }
+}
+
+/* 给需要闪烁的文字添加样式和动画 */
+.blink-text {
+    /* 调用动画：动画名称 持续时间 循环次数 运动曲线 */
+    animation: blink-opacity 0.6s infinite ease-in-out;
 }
 
 /* ==================== 5. 留言板样式 ==================== */
@@ -226,61 +442,8 @@ body.dark-mode .thought-item {
 }
 
 /* ==================== 8. 响应式与动画 ==================== */
-.hamburger { display: none; font-size: 24px; cursor: pointer; }
-@media (max-width: 768px) {
-    .hamburger { display: block; }
-    .menu {
-        display: none; flex-direction: column; position: absolute;
-        top: 60px; left: 0; width: 100%; background-color: var(--nav-bg);
-        box-shadow: 0 5px 5px rgba(0,0,0,0.1); padding: 20px 0;
-    }
-    .menu.active { display: flex; }
-    .menu a { margin: 10px 0; display: block; font-size: 18px; }
-}
+
 @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* 笔记网格布局 */
-.notes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 自动适配手机和电脑 */
-    gap: 15px;
-    margin-top: 15px;
-}
-
-/* 笔记卡片样式 */
-.note-card {
-    background: var(--card-bg);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: transform 0.3s ease;
-}
-.note-card:hover { transform: translateY(-5px); }
-
-.note-card img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover; /* 保证图片不失真 */
-}
-
-.note-info { padding: 8px; }
-.note-info h5 { margin: 0; font-size: 14px; }
-.note-tag { 
-    font-size: 10px; 
-    background: var(--primary-color); 
-    color: white; 
-    padding: 2px 5px; 
-    border-radius: 3px; 
-}
-
-/* 过滤器样式 */
-.filter-bar { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-.filter-tag {
-    font-size: 12px; padding: 4px 10px; cursor: pointer;
-    background: var(--tag-bg); border-radius: 20px;
-}
-.filter-tag.active { background: var(--primary-color); color: white; }
 
 /* 模态框背景遮罩 */
 .modal-overlay {
@@ -499,60 +662,7 @@ div.markdown-body h4 {
     border-left: 4px solid #50fa7b; 
 }
 
-#daily-grid .note-tag {
-    background-color: #50fa7b !important;
-}
 
-/* 荣誉墙网格 - 修复右侧空白问题 */
-.honors-grid {
-    display: grid;
-    /* 核心修改：使用 repeat(auto-fit) 让系统自动填充空间 */
-    /* minmax(80px, 1fr) 保证最小 80px，剩下的空间由所有勋章平分 */
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 15px;      
-    justify-items: center; /* 勋章在格子内居中 */
-    margin-top: 15px;
-    width: 100%;    /* 确保容器占满宽度 */
-}
-
-/* 勋章样式微调 */
-.honor-medal {
-    /* 删掉原来的固定的 width: 80px */
-    width: 100%;      /* 宽度随格子缩放 */
-    max-width: 100px; /* 但限制一个最大宽度，防止平板上变得巨宽 */
-    aspect-ratio: 1 / 1; /* 强制保持正方形 */
-    
-    background: var(--card-bg);
-    border-radius: 15px; 
-    border: 2px solid #ffd700; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.honor-medal:hover {
-    transform: scale(1.15) rotate(5deg); /* 悬停时放大并轻微旋转，增加灵动感 */
-    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
-    z-index: 10;
-}
-
-.honor-medal img {
-    width: 80%;  /* 图片不占满，留出一点呼吸感 */
-    height: 80%;
-    object-fit: contain; /* 保证证书/奖杯完整显示 */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-/* 手机端适配：如果屏幕太窄，勋章稍微缩小一点 */
-@media (max-width: 480px) {
-    .honor-medal {
-        width: 70px;
-        height: 70px;
-    }
-}
 
 .admin-card {
     border: 2px solid var(--primary-color);
@@ -639,12 +749,6 @@ input[type="file"]:hover {
     border-left: 4px solid #8be9fd; 
 }
 
-/* Tips 标签颜色优化 */
-#tips-grid .note-tag {
-    background-color: #8be9fd !important;
-    color: #282a36 !important; /* 深色文字保证阅读清晰 */
-}
-
 /* 管理后台针对 Tips 的适配 */
 #note-fields {
     /* 当 post-type 为 tips 时，在 JS 中逻辑已处理，CSS 确保其显示与 notes 一致 */
@@ -673,12 +777,6 @@ body.dark-mode #tips-grid .note-card {
     border-radius: 8px; /* 保持与原卡片圆角一致 */
 }
 
-/* 2. 统一笔记板块的标签颜色为紫色 */
-#notes-grid .note-tag {
-    background-color: #bd93f9 !important;
-    color: white !important;
-}
-
 /* 3. 悬停效果微调，保持动态感 */
 #notes-grid .note-card:hover {
     transform: translateY(-5px);
@@ -690,23 +788,12 @@ body.dark-mode #tips-grid .note-card {
     background: var(--card-bg);
     border-left: 4px solid #00acc1; /* 暗色模式下颜色稍深，更柔和 */
 }
-
-/* 确保 Tips 的文字在标签里清晰 */
-#tips-grid .note-tag {
-    color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
-} 
 
 /* Tips 卡片视觉区分：使用专属青蓝色边框 */
 #tips-grid .note-card {
     border-left: 4px solid #8be9fd; 
 }
 
-/* Tips 标签颜色优化 */
-#tips-grid .note-tag {
-    background-color: #8be9fd !important;
-    color: #282a36 !important; /* 深色文字保证阅读清晰 */
-}
-
 /* 管理后台针对 Tips 的适配 */
 #note-fields {
     /* 当 post-type 为 tips 时，在 JS 中逻辑已处理，CSS 确保其显示与 notes 一致 */
@@ -735,12 +822,6 @@ body.dark-mode #tips-grid .note-card {
     border-radius: 8px; /* 保持与原卡片圆角一致 */
 }
 
-/* 2. 统一笔记板块的标签颜色为紫色 */
-#notes-grid .note-tag {
-    background-color: #bd93f9 !important;
-    color: white !important;
-}
-
 /* 3. 悬停效果微调，保持动态感 */
 #notes-grid .note-card:hover {
     transform: translateY(-5px);
@@ -753,7 +834,3 @@ body.dark-mode #tips-grid .note-card {
     border-left: 4px solid #00acc1; /* 暗色模式下颜色稍深，更柔和 */
 }
 
-/* 确保 Tips 的文字在标签里清晰 */
-#tips-grid .note-tag {
-    color: #000 !important; /* 强制黑色文字，在青色背景上最清楚 */
-}

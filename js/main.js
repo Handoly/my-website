@@ -14,6 +14,117 @@ window.dataStorage = {
     daily_logs: []
 };
 
+// ==================== 3. UI 交互功能 ====================
+
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById("theme-btn");
+    body.classList.toggle("dark-mode");
+    const isDark = body.classList.contains("dark-mode");
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    btn.innerHTML = isDark ? "☀️" : "🌙";
+}
+
+function toggleMenu() {
+    document.getElementById("nav-menu").classList.toggle("active");
+}
+
+function handleCardClick(id, type) {
+    // 🚀 从仓库里根据 ID 找到对应的那条数据
+    const data = window.dataStorage[type].find(item => item.id === id);
+    
+    if (!data) return; // 防护：万一没找到
+
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel && adminPanel.style.display !== 'none') {
+        if (confirm(`📝 编辑“${data.title}”？`)) editPost(data, type);
+    } else {
+        openNote(data); // 这里的 data 依然是完整的对象，openNote 函数不用动
+    }
+}
+
+async function loadHonors() {
+    const grid = document.getElementById("honors-grid");
+    const { data, error } = await supabaseClient.from('honors').select('*').order('award_date', { ascending: false });
+    if (error || !data) return;
+
+    window.dataStorage.honors = data; // 存入全局变量
+
+    grid.innerHTML = data.map(honor => `
+        <div class="honor-medal" onclick="handleCardClick('${honor.id}', 'honors')">
+            <img src="${honor.image_url || 'default-icon.png'}" title="${honor.title}" loading="lazy">
+        </div>
+    `).join('');
+}
+
+async function loadNotes(category = 'all') {
+    const grid = document.getElementById("notes-grid");
+    let query = supabaseClient.from('notes').select('*').order('created_at', { ascending: false });
+    if (category !== 'all') query = query.eq('category', category);
+
+    const { data, error } = await query;
+    if (error) return;
+
+    // 🚀 第一处修改：将获取到的所有数据存入全局变量
+    // 这样 handleCardClick 就能通过 ID 在内存里找到完整对象
+    window.dataStorage.notes = data; 
+
+    grid.innerHTML = data.map(note => `
+        <div class="note-card" onclick="handleCardClick('${note.id}', 'notes')">
+            <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" loading="lazy" alt="预览">
+            <div class="note-info">
+                <span class="note-tag note-category">${note.category}</span>
+                <h5>${note.title}</h5>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadDailyLogs() {
+    const grid = document.getElementById("daily-grid");
+    const { data, error } = await supabaseClient.from('daily_logs').select('*').order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">今天还没发生什么新鲜事呢~</p>';
+        return;
+    }
+
+    window.dataStorage.daily_logs = data; // 存入全局变量
+
+    grid.innerHTML = data.map(log => `
+        <div class="note-card" onclick="handleCardClick('${log.id}', 'daily_logs')">
+            <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" loading="lazy" alt="日常">
+            <div class="note-info">
+                <span class="note-tag dailylog-date">${new Date(log.created_at).toLocaleDateString()}</span>
+                <h5>${log.title}</h5>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadTips() {
+    const grid = document.getElementById("tips-grid");
+    const { data, error } = await supabaseClient.from('tips').select('*').order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">暂时没有小知识分享~</p>';
+        return;
+    }
+
+    window.dataStorage.tips = data; // 存入全局变量
+
+    grid.innerHTML = data.map(tip => `
+        <div class="note-card" onclick="handleCardClick('${tip.id}', 'tips')">
+            <img src="${tip.image_url || 'https://via.placeholder.com/150?text=Tips'}" loading="lazy" alt="小知识">
+            <div class="note-info">
+                <span class="note-tag tips">💡 知识点</span>
+                <h5>${tip.title}</h5>
+            </div>
+        </div>
+    `).join('');
+}
+
+
 // ==================== 2. 图片压缩核心引擎 ====================
 /**
  * 核心：将图片压缩并转为 WebP 格式
@@ -49,20 +160,6 @@ async function compressImage(file, maxWidth = 1200, quality = 0.7) {
     });
 }
 
-// ==================== 3. UI 交互功能 ====================
-
-function toggleTheme() {
-    const body = document.body;
-    const btn = document.getElementById("theme-btn");
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    btn.innerHTML = isDark ? "☀️" : "🌙";
-}
-
-function toggleMenu() {
-    document.getElementById("nav-menu").classList.toggle("active");
-}
 
 // ==================== 4. 留言与想法功能 ====================
 
@@ -150,88 +247,6 @@ async function addThought() {
 
 // ==================== 5. 内容展示 (笔记/日常/荣誉) ====================
 
-async function loadNotes(category = 'all') {
-    const grid = document.getElementById("notes-grid");
-    let query = supabaseClient.from('notes').select('*').order('created_at', { ascending: false });
-    if (category !== 'all') query = query.eq('category', category);
-
-    const { data, error } = await query;
-    if (error) return;
-
-    // 🚀 第一处修改：将获取到的所有数据存入全局变量
-    // 这样 handleCardClick 就能通过 ID 在内存里找到完整对象
-    window.dataStorage.notes = data; 
-
-    grid.innerHTML = data.map(note => `
-        <div class="note-card" onclick="handleCardClick('${note.id}', 'notes')">
-            <img src="${note.image_url || 'https://via.placeholder.com/150?text=No+Image'}" loading="lazy" alt="预览">
-            <div class="note-info">
-                <span class="note-category">${note.category}</span>
-                <h5>${note.title}</h5>
-            </div>
-        </div>
-    `).join('');
-}
-
-async function loadDailyLogs() {
-    const grid = document.getElementById("daily-grid");
-    const { data, error } = await supabaseClient.from('daily_logs').select('*').order('created_at', { ascending: false });
-
-    if (error || !data || data.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">今天还没发生什么新鲜事呢~</p>';
-        return;
-    }
-
-    window.dataStorage.daily_logs = data; // 存入全局变量
-
-    grid.innerHTML = data.map(log => `
-        <div class="note-card" onclick="handleCardClick('${log.id}', 'daily_logs')">
-            <img src="${log.image_url || 'https://via.placeholder.com/150?text=Daily'}" loading="lazy" alt="日常">
-            <div class="note-info">
-                <span class="note-tag" style="background:#50fa7b; color:#282a36;">${new Date(log.created_at).toLocaleDateString()}</span>
-                <h5>${log.title}</h5>
-            </div>
-        </div>
-    `).join('');
-}
-
-async function loadTips() {
-    const grid = document.getElementById("tips-grid");
-    // 假设你在 Supabase 中新建了一个名为 'tips' 的数据表，或者复用 notes 表
-    // 这里我们按照你 HTML 的逻辑，从 'tips' 表读取
-    const { data, error } = await supabaseClient.from('tips').select('*').order('created_at', { ascending: false });
-
-    if (error || !data || data.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">暂时没有小知识分享~</p>';
-        return;
-    }
-
-    window.dataStorage.tips = data; // 存入全局变量
-
-    grid.innerHTML = data.map(tip => `
-        <div class="note-card" onclick="handleCardClick('${tip.id}', 'tips')">
-            <img src="${tip.image_url || 'https://via.placeholder.com/150?text=Tips'}" loading="lazy" alt="小知识">
-            <div class="note-info">
-                <span class="note-tag" style="background:#8be9fd; color:#282a36;">💡 知识点</span>
-                <h5>${tip.title}</h5>
-            </div>
-        </div>
-    `).join('');
-}
-
-async function loadHonors() {
-    const grid = document.getElementById("honors-grid");
-    const { data, error } = await supabaseClient.from('honors').select('*').order('award_date', { ascending: false });
-    if (error || !data) return;
-
-    window.dataStorage.honors = data; // 存入全局变量
-
-    grid.innerHTML = data.map(honor => `
-        <div class="honor-medal" onclick="handleCardClick('${honor.id}', 'honors')">
-            <img src="${honor.image_url || 'default-icon.png'}" title="${honor.title}" loading="lazy">
-        </div>
-    `).join('');
-}
 
 // ==================== 6. 详情页处理 ====================
 
@@ -405,20 +420,6 @@ async function submitPost() {
 }
 
 // ==================== 8. 管理逻辑 ====================
-
-function handleCardClick(id, type) {
-    // 🚀 从仓库里根据 ID 找到对应的那条数据
-    const data = window.dataStorage[type].find(item => item.id === id);
-    
-    if (!data) return; // 防护：万一没找到
-
-    const adminPanel = document.getElementById('admin-panel');
-    if (adminPanel && adminPanel.style.display !== 'none') {
-        if (confirm(`📝 编辑“${data.title}”？`)) editPost(data, type);
-    } else {
-        openNote(data); // 这里的 data 依然是完整的对象，openNote 函数不用动
-    }
-}
 
 function editPost(data, type) {
     document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
