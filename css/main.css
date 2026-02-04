@@ -251,6 +251,8 @@ body {
     margin-top: 15px;
     justify-items: flex-end; /* 勋章在格子内居中 */
     width: 100%;    /* 确保容器占满宽度 */
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 /* 勋章样式微调 */
@@ -319,14 +321,37 @@ body {
     color: white; 
 }
 
+/* 自定义滚动条样式 */
+.container::-webkit-scrollbar {
+    height: 6px; /* 纵向容器是 width，横向容器是 height */
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 .notes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 自动适配手机和电脑 */
+    /* display: grid; */
+    /*grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 自动适配手机和电脑 */
+    display: flex;
     gap: 15px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
     margin-top: 15px;
+    -webkit-overflow-scrolling: touch;
+    /* max-height: 300px; */
+    /* overflow-y: scroll; */
 }
 
 .note-card {
+    flex: 0 0 140px; /* 固定宽度，防止变形 */
+    width: 140px;
     background: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
