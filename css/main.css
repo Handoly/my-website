@@ -252,8 +252,8 @@ body {
     margin-top: 15px;
     justify-items: flex-end; /* 勋章在格子内居中 */
     width: 100%;    /* 确保容器占满宽度 */
-    max-height: 300px;
-    overflow-y: auto;
+    /* max-height: 300px;
+    overflow-y: auto; */
 }
 
 /* 勋章样式微调 */
