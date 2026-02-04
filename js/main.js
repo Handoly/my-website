@@ -527,7 +527,7 @@ function initThemePicker() {
     // 定义你的初始默认值
     const defaults = {
         '--primary-color': '#ba0000',
-        '--card-bg': '#ffffff',
+        '--card-bg': 'rgba(200, 191, 191, 0.8)',
         '--nav-bg': '#f6f8fa',
         '--text-color': '#000000'
     };

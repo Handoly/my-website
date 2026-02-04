@@ -4,13 +4,14 @@
     --bg-image: url('https://images.pexels.com/photos/33673336/pexels-photo-33673336.jpeg');
     --primary-color: #ba0000;
     --bg-color: #f0f8ff;
-    --card-bg: rgb(253, 253, 253);
+    --card-bg: rgba(200, 191, 191, 0.8);
+    /* --card-bg: rgba(255, 255, 255, 0.7); */
     --text-color: #000000;
     --nav-bg: rgb(255, 255, 255);
     --input-bg: white;
     --input-border: #ddd;
     --tag-bg: #f0f0f0;
-    --tag-text: #666;
+    --tag-text: #ffffff;
     --footer-line: #eee;
     --shadow: 0 5px 15px rgba(0,0,0,0.1);
     --thought-orange: #ff9800;
@@ -321,18 +322,36 @@ body {
     color: white; 
 }
 
-/* 自定义滚动条样式 */
-.container::-webkit-scrollbar {
-    height: 6px; /* 纵向容器是 width，横向容器是 height */
+/* 给父容器加一个伪元素 */
+.notes-scroll-window {
+    position: relative;
 }
 
-.container::-webkit-scrollbar-thumb {
-    background: #ccc;
+.notes-scroll-window::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 100%;
+    /* 从透明到背景色的渐变 */
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+    pointer-events: none; /* 确保遮罩不阻碍点击 */
+}
+
+/* 让滚动条常驻并变美观 */
+.notes-grid::-webkit-scrollbar {
+    display: block; /* 强制显示 */
+    height: 4px;    /* 很细的横向滚动条 */
+}
+
+.notes-grid::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* 使用你的主题色 */
     border-radius: 10px;
 }
 
-.container::-webkit-scrollbar-track {
-    background: transparent;
+.notes-grid::-webkit-scrollbar-track {
+    background: #f0f0f0; /* 底色，提示滚动的总长度 */
 }
 
 .notes-grid {
