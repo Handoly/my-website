@@ -66,8 +66,17 @@ body {
     transition: opacity 2s ease;
 }
 
-.loading-title { font-size: 24px; margin-bottom: 15px; font-weight: bold; }
-.loading-sub { color: var(--tag-text); opacity: 0.8; }
+.loading-title { 
+    font-size: 24px; 
+    margin-bottom: 15px; 
+    font-weight: bold; 
+}
+
+.loading-sub { 
+    color: var(--tag-text); 
+    opacity: 0.8; 
+}
+
 .loading-spinner {
     width: 40px; height: 40px;
     border: 4px solid var(--tag-bg);
@@ -367,83 +376,206 @@ body {
     color:#282a36;
 }
 
-/* 定义闪烁动画 */
-@keyframes blink-opacity {
-    /* 动画关键帧：0%、50%、100% 是动画的三个节点 */
-    0% {
-        opacity: 1; /* 完全显示 */
-    }
-    50% {
-        opacity: 0; /* 完全隐藏（可改为 0.5 实现半闪烁，不那么刺眼） */
-    }
-    100% {
-        opacity: 1; /* 回到完全显示，形成循环 */
-    }
-}
-
-/* 给需要闪烁的文字添加样式和动画 */
-.blink-text {
-    /* 调用动画：动画名称 持续时间 循环次数 运动曲线 */
-    animation: blink-opacity 0.6s infinite ease-in-out;
-}
-
-/* ==================== 5. 留言板样式 ==================== */
-#comments-container {
-    max-height: 400px; overflow-y: scroll; padding-right: 8px;
-}
-#comments-container::-webkit-scrollbar { width: 6px; }
-#comments-container::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 10px; }
-#comments-container::-webkit-scrollbar-track { background: var(--tag-bg); border-radius: 10px; }
-
-.comment-card {
-    background: var(--card-bg); border-left: 5px solid var(--primary-color);
-    padding: 12px; margin-bottom: 12px; border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;
-    animation: slideIn 0.3s ease-out;
-}
-.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-.comment-header strong { color: var(--primary-color); }
-.location-tag { font-size: 11px; color: var(--tag-text); background-color: var(--tag-bg); padding: 2px 6px; border-radius: 4px; }
-.comment-footer { border-top: 1px dashed var(--footer-line); padding-top: 5px; margin-top: 8px; text-align: right; color: #999; }
-/* 把删除按钮设置为不可见，不允许删除留言 */
-.delete-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; }
-
-/* ==================== 6. 表单与按钮 ==================== */
 input, textarea {
-    width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box;
+    width: 100%; 
+    padding: 10px; 
+    margin: 5px 0; 
+    box-sizing: border-box;
     border: 1px solid var(--input-border);
-    background-color: var(--input-bg); color: var(--text-color); border-radius: 4px;
+    background-color: var(--input-bg); 
+    color: var(--text-color); 
+    border-radius: 4px;
 }
-input:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(0, 140, 186, 0.3); }
+input:focus, textarea:focus { 
+    outline: none; 
+    border-color: var(--primary-color); 
+    box-shadow: 0 0 5px rgba(0, 140, 186, 0.3); }
 
 .btn-blue {
-    background-color: var(--primary-color); color: white; border: none;
-    padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%;
+    background-color: var(--primary-color); 
+    color: white; 
+    border: none;
+    padding: 10px 20px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    width: 100%;
 }
-button:disabled { background-color: #a5a5a5 !important; cursor: not-allowed; opacity: 0.7; }
 
-/* ==================== 7. 私密想法样式 (解锁后) ==================== */
-/* 加上 !important 确保初始状态绝对隐藏，不被其他样式干扰 */
+button:disabled { 
+    background-color: #a5a5a5 !important; 
+    cursor: not-allowed; 
+    opacity: 0.7;
+}
+
+#comments-container {
+    max-height: 400px; 
+    overflow-y: scroll; 
+    padding-right: 8px;
+}
+
+.comment-card {
+    background: var(--card-bg); 
+    border-left: 5px solid var(--primary-color);
+    padding: 12px; 
+    margin-bottom: 12px; 
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    position: relative;
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn { 
+    from { 
+        opacity: 0; 
+        transform: translateY(100px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+}
+
+.delete-btn { 
+    position: absolute; 
+    top: 10px; 
+    right: 10px; 
+    background: transparent; 
+    border: none; 
+    color: #ff4d4d; 
+    cursor: pointer; 
+    font-weight: bold; 
+} 
+
+.comment-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    margin-bottom: 5px; 
+}
+
+.comment-header strong { 
+    color: var(--primary-color); 
+}
+
+.location-tag { 
+    font-size: 11px; 
+    color: var(--tag-text); 
+    background-color: var(--tag-bg); 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+}
+
+.comment-footer { 
+    border-top: 1px dashed var(--footer-line); 
+    padding-top: 5px; 
+    margin-top: 8px; 
+    text-align: right; 
+    color: #999; 
+}
+
 .thought-container {
-    display: none !important; 
+    display: none; 
     border-top: 5px solid var(--thought-orange);
 }
-.btn-thought { background-color: var(--thought-orange); margin-top: 10px; }
+
+.btn-thought { 
+    background-color: var(--thought-orange); 
+    margin: 10px 0; 
+}
 
 .thought-item {
-    font-size: 14px; padding: 12px; 
-    background: #fff8e1; border-radius: 8px; 
-    margin-bottom: 10px; color: #5d4037;
+    font-size: 14px; 
+    padding: 12px; 
+    background: #fff8e1; 
+    border-radius: 8px; 
+    margin-bottom: 10px; 
+    color: #5d4037;
     border-left: 4px solid var(--thought-orange);
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
+
 body.dark-mode .thought-item {
     background: #333; color: #ffe0b2;
 }
 
-/* ==================== 8. 响应式与动画 ==================== */
+.thought-item > small {
+    color: #999; 
+    font-size: 11px;
+}
 
-@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.admin-card {
+    display: none;
+    border: 2px solid var(--primary-color);
+    background: var(--card-bg);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+}
+
+.admin-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.btn-logout {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #ff6b81;
+    transform: scale(1.05);
+}
+
+.upload-status {
+    font-size: 12px;
+    color: var(--primary-color);
+    margin-top: 5px;
+    display: block;
+    font-weight: normal;
+}
+
+.admin-buttonds {
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-button {
+    flex:2;
+}
+
+.delete-button {
+    flex:1;
+    background:#ff4757;
+    display:none;
+}
+
+.cancel-button {
+    flex:1;
+    background:#747d8c;
+    display:none;
+}
 
 /* 模态框背景遮罩 */
 .modal-overlay {
@@ -483,6 +615,46 @@ body.dark-mode .thought-item {
     color: red;
     margin-right: 15px; /* 右侧留点间距 */
 }
+
+/* 定义闪烁动画 */
+@keyframes blink-opacity {
+    /* 动画关键帧：0%、50%、100% 是动画的三个节点 */
+    0% {
+        opacity: 1; /* 完全显示 */
+    }
+    50% {
+        opacity: 0; /* 完全隐藏（可改为 0.5 实现半闪烁，不那么刺眼） */
+    }
+    100% {
+        opacity: 1; /* 回到完全显示，形成循环 */
+    }
+}
+
+/* 给需要闪烁的文字添加样式和动画 */
+.blink-text {
+    /* 调用动画：动画名称 持续时间 循环次数 运动曲线 */
+    animation: blink-opacity 0.6s infinite ease-in-out;
+}
+
+/* ==================== 5. 留言板样式 ==================== */
+
+#comments-container::-webkit-scrollbar { width: 6px; }
+#comments-container::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 10px; }
+#comments-container::-webkit-scrollbar-track { background: var(--tag-bg); border-radius: 10px; }
+
+
+/* ==================== 6. 表单与按钮 ==================== */
+
+
+/* ==================== 7. 私密想法样式 (解锁后) ==================== */
+/* 加上 !important 确保初始状态绝对隐藏，不被其他样式干扰 */
+
+
+/* ==================== 8. 响应式与动画 ==================== */
+
+
+
+
 
 /* 详情页内的文字排版 */
 /* 1. 给图片增加一个“带滚动条”的容器 */
@@ -664,13 +836,7 @@ div.markdown-body h4 {
 
 
 
-.admin-card {
-    border: 2px solid var(--primary-color);
-    background: var(--card-bg);
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 15px;
-}
+
 
 .admin-card input, .admin-card textarea, .admin-card select {
     width: 100%;
@@ -682,17 +848,7 @@ div.markdown-body h4 {
     color: var(--text-color);
 }
 
-.submit-btn {
-    width: 100%;
-    padding: 15px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
+
 
 .submit-btn:hover { opacity: 0.8; }
 
@@ -718,21 +874,7 @@ input[type="file"]:hover {
     transform: scale(1.05);
 }
 
-.btn-logout {
-    background: #ff4757;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.3s;
-}
 
-.btn-logout:hover {
-    background: #ff6b81;
-    transform: scale(1.05);
-}
 
 /* ==================== 9. 新增：Tips 板块专属样式 (不影响原样式) ==================== */
 
@@ -749,19 +891,7 @@ input[type="file"]:hover {
     border-left: 4px solid #8be9fd; 
 }
 
-/* 管理后台针对 Tips 的适配 */
-#note-fields {
-    /* 当 post-type 为 tips 时，在 JS 中逻辑已处理，CSS 确保其显示与 notes 一致 */
-}
 
-/* 优化上传状态的提示文字颜色 */
-#upload-status, #content-upload-status {
-    font-size: 12px;
-    color: var(--primary-color);
-    margin-top: 5px;
-    display: block;
-    font-weight: normal;
-}
 
 /* 确保 Tips 板块在暗黑模式下的表现 */
 body.dark-mode #tips-grid .note-card {
@@ -792,20 +922,6 @@ body.dark-mode #tips-grid .note-card {
 /* Tips 卡片视觉区分：使用专属青蓝色边框 */
 #tips-grid .note-card {
     border-left: 4px solid #8be9fd; 
-}
-
-/* 管理后台针对 Tips 的适配 */
-#note-fields {
-    /* 当 post-type 为 tips 时，在 JS 中逻辑已处理，CSS 确保其显示与 notes 一致 */
-}
-
-/* 优化上传状态的提示文字颜色 */
-#upload-status, #content-upload-status {
-    font-size: 12px;
-    color: var(--primary-color);
-    margin-top: 5px;
-    display: block;
-    font-weight: normal;
 }
 
 /* 确保 Tips 板块在暗黑模式下的表现 */
