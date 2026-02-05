@@ -225,6 +225,10 @@
       <div class="editor-toolbar">
         <label for="content-img-upload" class="toolbar-btn">🖼️ 插入正文图片</label>
         <input type="file" id="content-img-upload" accept="image/*" hidden onchange="uploadToContent()">
+        
+        <label for="md-import-upload" class="toolbar-btn" style="background-color: transparent; color: black;">📥 导入 Markdown</label>
+        <input type="file" id="md-import-upload" accept=".md" hidden onchange="importMarkdownFile()">
+        
         <span id="content-upload-status" class="upload-status"></span>
       </div>
 
