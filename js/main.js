@@ -252,6 +252,57 @@ async function submitPost() {
     }
 }
 
+async function importMarkdownFile() {
+    const fileInput = document.getElementById('md-import-upload');
+    const textArea = document.getElementById('post-content');
+    const titleInput = document.getElementById('post-title');
+    const status = document.getElementById('content-upload-status');
+
+    if (fileInput.files.length === 0) return;
+    const file = fileInput.files[0];
+    status.innerText = "正在读取 MD...";
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        let content = e.target.result;
+
+        // 1. 自动填充标题 (去掉 .md 后缀)
+        if (!titleInput.value) {
+            titleInput.value = file.name.replace('.md', '');
+        }
+
+        // 2. 检测本地图片路径 (检测 ![alt](path) 格式，排除 http)
+        const localImageRegex = /!\[.*?\]\((?!(http:\/\/|https:\/\/|data:|\/))(.*?)\)/g;
+        const matches = [...content.matchAll(localImageRegex)].filter(m => m[2].trim() !== 'path');
+
+        if (matches.length > 0) {
+            console.log("检测到的疑似本地路径列表：", matches.map(m => m[2]));
+            const pathList = matches.slice(0, 3).map(m => m[2]).join(', ');
+            const confirmImport = confirm(
+                `⚠️ 检测到 ${matches.length} 处本地图片路径（如: ${pathList}...）。\n\n导入后这些图片将无法在网页显示。建议先在 Typora 中通过 PicGo 上传。是否仍要导入文字内容？`
+            );
+            if (!confirmImport) {
+                status.innerText = "❌ 导入已取消";
+                return;
+            }
+        }
+
+        // 3. 将内容填入编辑器
+        textArea.value = content;
+        status.innerText = "✅ MD 导入成功";
+        
+        // 重置 input 方便下次导入
+        fileInput.value = '';
+    };
+
+    reader.onerror = () => {
+        alert("文件读取失败");
+        status.innerText = "❌ 失败";
+    };
+
+    reader.readAsText(file);
+}
+
 async function uploadToStorage() {
     const fileInput = document.getElementById('file-upload');
     const status = document.getElementById('upload-status');

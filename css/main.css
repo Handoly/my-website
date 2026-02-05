@@ -236,7 +236,7 @@ body {
     /* max-width: 500px;  */
     margin: 20px auto;
     background: var(--card-bg); 
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px; 
     text-align: left; 
     box-shadow: var(--shadow);
@@ -250,8 +250,10 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 15px;      
     margin-top: 15px;
+    padding: 15px 15px;
     justify-items: flex-end; /* 勋章在格子内居中 */
     width: 100%;    /* 确保容器占满宽度 */
+    overflow-x: hidden;
     /* max-height: 300px;
     overflow-y: auto; */
 }
@@ -362,7 +364,7 @@ body {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    margin-top: 15px;
+    padding: 15px 15px;
     -webkit-overflow-scrolling: touch;
     /* max-height: 300px; */
     /* overflow-y: scroll; */
@@ -845,6 +847,12 @@ div.markdown-body h4 {
     margin-top: 0px;
     margin-bottom: -20px;
     color:  #963c00;
+}
+
+div.markdown-body h5 {
+    margin-top: 0px;
+    margin-bottom: -20px;
+    color:  #0f07ec;
 }
 
 .markdown-body ul, .markdown-body ol {
