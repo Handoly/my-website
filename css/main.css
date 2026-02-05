@@ -232,7 +232,7 @@ body {
 }
 
 .container {
-    width: 85%; 
+    width: 75%; 
     /* max-width: 500px;  */
     margin: 20px auto;
     background: var(--card-bg); 
@@ -250,12 +250,12 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 15px;      
     margin-top: 15px;
-    padding: 15px 15px;
-    justify-items: flex-end; /* 勋章在格子内居中 */
+    padding: 15px 0px;
+    justify-items: flex-start; /* 勋章在格子内居中 */
     width: 100%;    /* 确保容器占满宽度 */
     overflow-x: hidden;
-    /* max-height: 300px;
-    overflow-y: auto; */
+    max-height: 150px;
+    overflow-y: auto;
 }
 
 /* 勋章样式微调 */
@@ -364,7 +364,7 @@ body {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 15px 15px;
+    padding: 5px 5px;
     -webkit-overflow-scrolling: touch;
     /* max-height: 300px; */
     /* overflow-y: scroll; */
@@ -639,12 +639,12 @@ body.dark-mode .thought-item {
     position: relative;
     background: var(--card-bg);
     width: 90%;
-    max-width: 600px;
-    margin: 50px auto;
+    /* max-width: 600px; */
+    margin: 1px auto 50px;
     padding: 25px;
-    border-radius: 15px;
-    max-height: 80vh;
-    overflow-y: auto; /* 内容多了可以滚动 */
+    border-radius: 10px;
+    height: 92%;
+    overflow-y: auto; /*内容多了可以滚动*/
     animation: zoomIn 0.3s ease;
 }
 
@@ -931,12 +931,12 @@ input[type="file"]:hover {
 /* ==================== 9. 新增：Tips 板块专属样式 (不影响原样式) ==================== */
 
 /* Tips 网格布局：保持与 notes-grid 一致 */
-#tips-grid {
+/* #tips-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
     margin-top: 15px;
-}
+} */
 
 /* Tips 卡片视觉区分：使用专属青蓝色边框 */
 #tips-grid .note-card {
