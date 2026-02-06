@@ -527,10 +527,16 @@ async function deletePost() {
     location.reload();
 }
 
-function logoutAdmin() {
-    if (confirm("退出管理模式？")) {
-        localStorage.removeItem('keep_admin_open');
-        location.reload();
+async function logoutAdmin() {
+    // if (confirm("退出管理模式？")) {
+    //     localStorage.removeItem('keep_admin_open');
+    //     location.reload();
+    // }
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) console.error("退出失败");
+    else {
+        alert("已安全退出管理员模式");
+        location.reload(); // 刷新后 session 消失，后台就会隐藏
     }
 }
 
@@ -651,6 +657,37 @@ function smartTypeWriter(target, speed = 100, isLoop = false, loopDelay = 10000)
     typing();
 }
 
+function adminLogin() {
+    // --- 3. 登录触发器：保留你输入 "admin" 触发登录的习惯 ---
+    const nameInput = document.getElementById("name-input");
+    if (nameInput) {
+        nameInput.value = localStorage.getItem('saved_username') || "";
+        nameInput.addEventListener('input', async (e) => {
+            if (e.target.value.trim() === "admin") {
+        e.target.value = "";
+        // 不再用 prompt，而是显示对话框
+        const dialog = document.getElementById('login-dialog');
+        dialog.showModal(); 
+    }
+
+    // 处理表单提交
+    document.getElementById('login-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+            alert("登录失败: " + error.message);
+        } else {
+            alert("🔓 身份验证成功，正在刷新...");
+            location.reload(); 
+        }
+    };
+        });
+    }
+}
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
@@ -660,37 +697,27 @@ window.onload = async () => {
         document.getElementById("theme-btn").innerHTML = "☀️";
     }
 
-    // 恢复后台状态
-    if (localStorage.getItem('keep_admin_open') === 'true') {
+    // --- 2. 核心：检查管理员权限 (替换原有的 localStorage 逻辑) ---
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session) {
+        // 如果已登录，显示所有后台面板
         document.getElementById('admin-panel').style.display = 'block';
         document.getElementById('thought-section').style.display = 'block';
-        loadThoughts();
-    }
-
-    if (document.getElementById('admin-panel').style.display === 'block') {
         toggleFields();
+        loadThoughts(); 
     }
 
-    const nameInput = document.getElementById("name-input");
-    if (nameInput) {
-        nameInput.value = localStorage.getItem('saved_username') || "";
-        nameInput.addEventListener('input', (e) => {
-            if (e.target.value.trim() === "admin") {
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('thought-section').style.display = 'block';
-                toggleFields();
-                loadThoughts();
-                loadComments();
-                e.target.value = "";
-                alert("🔓 管理员模式已开启");
-            }
-        });
-    }
+    adminLogin();
 
     await Promise.all([loadComments(), loadNotes(), loadDailyLogs(), loadHonors(), loadTips()]);
     
     // 实时更新留言
-    supabaseClient.channel('comments').on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => loadComments()).subscribe();
+    supabaseClient.channel('comments').on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'comments' 
+    }, () => loadComments()).subscribe();
 
     initThemePicker();
 
