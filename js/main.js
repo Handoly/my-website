@@ -657,33 +657,33 @@ function smartTypeWriter(target, speed = 100, isLoop = false, loopDelay = 10000)
     typing();
 }
 
-function adminLogin() {
+async function adminLogin() {
     // --- 3. 登录触发器：保留你输入 "admin" 触发登录的习惯 ---
     const nameInput = document.getElementById("name-input");
     if (nameInput) {
         nameInput.value = localStorage.getItem('saved_username') || "";
         nameInput.addEventListener('input', async (e) => {
             if (e.target.value.trim() === "admin") {
-        e.target.value = "";
-        // 不再用 prompt，而是显示对话框
-        const dialog = document.getElementById('login-dialog');
-        dialog.showModal(); 
-    }
+                e.target.value = "";
+                // 不再用 prompt，而是显示对话框
+                const dialog = document.getElementById('login-dialog');
+                dialog.showModal(); 
+            }
 
-    // 处理表单提交
-    document.getElementById('login-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
+            // 处理表单提交
+            document.getElementById('login-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
 
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) {
-            alert("登录失败: " + error.message);
-        } else {
-            alert("🔓 身份验证成功，正在刷新...");
-            location.reload(); 
-        }
-    };
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    alert("登录失败: " + error.message);
+                } else {
+                    alert("登录成功！");
+                    location.reload(); 
+                }
+            };
         });
     }
 }

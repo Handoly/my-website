@@ -166,6 +166,15 @@
       </div>
     </section>
 
+    <dialog id="login-dialog" style="padding: 20px; border-radius: 8px; border: 1px solid #ccc;">
+      <form id="login-form" method="dialog">
+          <h3>管理员认证</h3>
+          <input type="email" id="login-email" placeholder="邮箱" required style="display:block; margin-bottom:10px;">
+          <input type="password" id="login-password" placeholder="密码" required style="display:block; margin-bottom:10px;">
+          <button type="submit" id="confirm-login">登录</button>
+          <button type="button" onclick="document.getElementById('login-dialog').close()">取消</button>
+      </form>
+    </dialog>
 
     <!-- Thought Section -->
     <section id="thought-section" class="container thought-container">
@@ -176,17 +185,6 @@
 
       <div id="thoughts-container"></div>
     </section>
-
-
-    <dialog id="login-dialog" style="padding: 20px; border-radius: 8px; border: 1px solid #ccc;">
-      <form id="login-form" method="dialog">
-          <h3>管理员认证</h3>
-          <input type="email" id="login-email" placeholder="邮箱" required style="display:block; margin-bottom:10px;">
-          <input type="password" id="login-password" placeholder="密码" required style="display:block; margin-bottom:10px;">
-          <button type="submit" id="confirm-login">登录</button>
-          <button type="button" onclick="document.getElementById('login-dialog').close()">取消</button>
-      </form>
-    </dialog>
 
     <!-- Admin Panel -->
     <section id="admin-panel" class="container admin-card">
