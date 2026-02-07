@@ -37,7 +37,11 @@ function handleCardClick(id, type) {
  
     const isAdmin = document.getElementById('admin-panel').style.display === 'block';
     if (isAdmin) {
-        if (confirm(`📝 编辑“${data.title}”？`)) editPost(data, type);
+        if (confirm(`📝 编辑“${data.title}”？`)) {
+            editPost(data, type);
+        } else if (confirm(`🤓 查看“${data.title}”？`)) {
+            openNote(data); 
+        }
     } else {
         openNote(data); // 这里的 data 依然是完整的对象，openNote 函数不用动
     }
