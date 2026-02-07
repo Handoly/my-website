@@ -230,7 +230,15 @@ async function loadComments() {
             
             ${comment.audio_url ? `
                 <div class="audio-player" style="margin-top:10px;">
-                    <audio src="${comment.audio_url}" controls style="width:100%; height:30px;"></audio>
+                    <audio 
+                    src="${comment.audio_url}" 
+                    controls 
+                    preload="none" 
+                    style="width:100%; height:40px;"
+                    onplay="this.setAttribute('data-played', 'true')"
+                    onclick="if(this.paused && this.getAttribute('data-played')) { this.load(); this.play(); }"
+                    >
+                    </audio>
                 </div>
             ` : ''}
 
