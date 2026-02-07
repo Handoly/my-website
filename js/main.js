@@ -794,7 +794,7 @@ function initRecorder() {
 }
 
 
-var vConsole = new window.VConsole();
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
