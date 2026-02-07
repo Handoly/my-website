@@ -156,6 +156,13 @@
       <form onsubmit="addComment(); return false;">
         <input type="text" id="name-input" placeholder="你的名字" required>
         <textarea id="content-input" rows="3" placeholder="想说的话..."></textarea>
+
+        <div class="audio-controls" style="margin: 10px 0;">
+          <button type="button" id="record-btn" class="btn">🎤 开始录音</button>
+          <span id="record-status" style="font-size: 12px; color: #666; margin-left: 10px;"></span>
+          <audio id="audio-preview" controls style="display:none; margin-top: 10px; height: 30px;"></audio>
+        </div>
+
         <button type="submit" class="btn btn-blue">发送</button>
       </form>
 

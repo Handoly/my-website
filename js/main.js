@@ -135,24 +135,64 @@ async function loadTips() {
     `).join('');
 }
 
+// 2. 修改后的发送函数
 async function addComment() {
     const nameInput = document.getElementById("name-input");
     const contentInput = document.getElementById("content-input");
     const submitBtn = document.querySelector('button[type="submit"]');
+    
     const username = nameInput.value.trim();
     const content = contentInput.value.trim();
 
-    if (!username || !content) { alert("名字和内容都要写哦！"); return; }
+    // 修改验证逻辑：要么有文字，要么有录音
+    if (!username || (!content && !audioBlob)) { 
+        alert("名字和内容（或语音）都要写哦！"); 
+        return; 
+    }
 
     submitBtn.disabled = true;
-    submitBtn.innerText = "正在发送...";
+    submitBtn.innerText = "正在上传...";
 
     try {
-        localStorage.setItem('saved_username', username);
+        let audioUrl = null;
+
+        // 如果有录音，先上传到 Supabase Storage
+        if (audioBlob) {
+            const fileName = `audio_${Date.now()}.webm`;
+            const { data, error: uploadError } = await supabaseClient
+                .storage
+                .from('comment-audios') // 记得在 Supabase 控制台新建这个 Bucket
+                .upload(fileName, audioBlob);
+
+            if (uploadError) throw uploadError;
+
+            // 获取公开访问链接
+            const { data: publicUrlData } = supabaseClient.storage
+                .from('comment-audios')
+                .getPublicUrl(fileName);
+            audioUrl = publicUrlData.publicUrl;
+        }
+
+        // 存入数据库 (增加 audio_url 字段)
         const { error } = await supabaseClient
             .from('comments')
-            .insert([{ username, content, location: "来自地球" }]);
-        if (!error) contentInput.value = "";
+            .insert([{ 
+                username, 
+                content, 
+                location: "来自地球",
+                audio_url: audioUrl // 需要在数据库表中增加这一列
+            }]);
+
+        if (!error) {
+            contentInput.value = "";
+            audioBlob = null;
+            audioPreview.style.display = 'none';
+            statusSpan.innerText = "";
+            recordBtn.innerText = "🎤 开始录音";
+        }
+    } catch (err) {
+        console.error(err);
+        alert("发送失败，请检查网络或配置");
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "发送";
@@ -185,7 +225,15 @@ async function loadComments() {
                 <strong>${comment.username}</strong>
                 <span class="location-tag">📍 ${comment.location || '中国'}</span>
             </div>
-            <p>${comment.content}</p>
+            
+            ${comment.content ? `<p>${comment.content}</p>` : ''}
+            
+            ${comment.audio_url ? `
+                <div class="audio-player" style="margin-top:10px;">
+                    <audio src="${comment.audio_url}" controls style="width:100%; height:30px;"></audio>
+                </div>
+            ` : ''}
+
             <div class="comment-footer"><small>${new Date(comment.created_at).toLocaleString('zh-CN', { hour12: false })}</small></div>
         </div>
     `).join('');
@@ -699,6 +747,44 @@ function test() {
     console.log("测试按钮被点击了！");
 }
 
+let mediaRecorder;
+let audioChunks = [];
+let audioBlob = null; // 存储最终生成的音频文件
+const recordBtn = document.getElementById('record-btn');
+const statusSpan = document.getElementById('record-status');
+const audioPreview = document.getElementById('audio-preview');
+
+function initRecorder() {
+
+    // 1. 录音逻辑控制
+    recordBtn.onclick = async () => {
+        if (!mediaRecorder || mediaRecorder.state === "inactive") {
+            // 开始录音
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                audioPreview.src = URL.createObjectURL(audioBlob);
+                audioPreview.style.display = 'block';
+            };
+
+            mediaRecorder.start();
+            recordBtn.innerText = "🛑 停止录制";
+            recordBtn.style.backgroundColor = "#ff4d4f";
+            statusSpan.innerText = "正在录音...";
+        } else {
+            // 停止录音
+            mediaRecorder.stop();
+            recordBtn.innerText = "🎤 重新录制";
+            recordBtn.style.backgroundColor = "";
+            statusSpan.innerText = "录制完成！";
+        }
+    };
+}
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
@@ -730,7 +816,11 @@ window.onload = async () => {
         table: 'comments' 
     }, () => loadComments()).subscribe();
 
+    initRecorder();
+
     initThemePicker();
+
+    
 
     const loader = document.getElementById('loading-screen');
     if (loader) { 
