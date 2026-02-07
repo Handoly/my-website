@@ -40,6 +40,7 @@
       <div class="logo">
         邓万穿
         <button id="settings-toggle" class="settings-toggle">⚙️</button>
+        <button id="test-btn" class="test-btn" onclick="test()">🏆测试1</button>
       </div>
 
       <div id="settings-panel" class="settings-panel">
@@ -223,7 +224,15 @@
       </div>
 
       <div id="note-fields" class="note-fields" style="display: none;">
-        <input type="text" id="note-post-category" placeholder="分类 (前端/日文/FPGA)...">
+        <!-- <input type="text" id="note-post-category" placeholder="分类 (前端/日文/FPGA)..."> -->
+        <select name="note-category" id="note-post-category" required>
+          <option value="网站" selected>网站</option>
+          <option value="日文">日文</option>
+          <option value="Flutter">Flutter</option>
+          <option value="FPGA">FPGA</option>
+          <option value="电路">电路</option>
+          <option value="陀螺">陀螺</option>
+        </select>
       </div>
 
       <div id="tips-fields" class="tips-fields" style="display: none;">

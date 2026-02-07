@@ -230,7 +230,7 @@ async function submitPost() {
 
     const postData = { title, image_url, content };
     if (type === 'notes') {
-        postData.category = document.getElementById('note-post-category').value || '未分类';
+        postData.category = document.getElementById('note-post-category').value !== '选择分类' ? document.getElementById('note-post-category').value : '未分类';
     }
     if (type === 'tips') {
         postData.category = document.getElementById('tip-post-category').value || '未分类';
@@ -688,6 +688,13 @@ async function adminLogin() {
     }
 }
 
+function test() {
+    window.alert("这是一个测试按钮，未来会有更多功能哦！敬请期待~");
+    // document.write('hello world');
+    document.getElementById('settings-toggle').innerHTML = "⚙️ (测试成功)";
+    console.log("测试按钮被点击了！");
+}
+
 // ==================== 9. 初始化启动 ====================
 
 window.onload = async () => {
@@ -726,6 +733,8 @@ window.onload = async () => {
         loader.style.opacity = '0'; 
         setTimeout(() => loader.style.display = 'none', 500); 
     }
+
+    //window.alert("欢迎来到我的个人空间！🎉\n\n这是一个记录我生活点滴和分享小知识的地方，希望你能喜欢这里的内容！如果有任何建议或者想法，欢迎在留言区告诉我哦！😊");
 
     smartTypeWriter('.typewriter-text', 150, true, 10000);
 }; 
