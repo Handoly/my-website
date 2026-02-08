@@ -648,19 +648,7 @@ body.dark-mode .thought-item {
     animation: zoomIn 0.3s ease;
 }
 
-/* 关闭按钮 */
-.close-modal {
-    position: sticky; /* 🚀 核心修改：粘性定位 */
-    top: 10px;        /* 距离弹窗顶部边缘的距离 */
-    float: right;     /* 让它往右靠 */
-    z-index: 1001;    /* 确保它在内容之上 */
-    
-    /* 你原本的样式 */
-    font-size: 60px;  /* 建议稍微调小一点，60px有点太大了 */
-    cursor: pointer;
-    color: red;
-    margin-right: 15px; /* 右侧留点间距 */
-}
+
 
 /* 定义闪烁动画 */
 @keyframes blink-opacity {
@@ -807,6 +795,41 @@ body.dark-mode .thought-item {
 
 /* Markdown 专属排版美化 */
 /* 减小 Markdown 段落之间的上下间距 */
+
+/* 关闭按钮 */
+.close-modal, .font-size-controls {
+    position: fixed; /* 🚀 核心修改：粘性定位 */
+    top: 3%;        /* 距离弹窗顶部边缘的距离 */
+    right: 7%;
+    z-index: 1001;    /* 确保它在内容之上 */
+    cursor: pointer;
+}
+
+.font-size-contrl {
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 5px;
+    border: white solid 1px;
+}
+
+.font-fault {
+    font-size: 12px;
+}
+
+.note-close-btn {
+    font-size: 30px;
+    color: red;
+    background-color: #ffffff;
+    border: white solid 1px;
+    border-radius: 5px;
+}
+
+
+
+/* 强制覆盖 markdown-body 默认字号，改用 JS 控制 */
+.markdown-body {
+    transition: font-size 0.2s ease-out; /* 让缩放更平滑 */
+}
+
 .markdown-body {
     /* 英文在前（手写感），中文在后（圆润感） */
     font-family: 
@@ -817,6 +840,7 @@ body.dark-mode .thought-item {
         'Microsoft YaHei UI',   /* 备选 */
         'cursive',              /* 最后的兜底：草书/手写类 */
         sans-serif;
+    font-size: 22px;
 }
 
 .markdown-body p {

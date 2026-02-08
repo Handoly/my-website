@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Finger+Paint&family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&family=Gaegu&family=Hi+Melody&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <!-- Third-party libs -->
   <script src="https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://lib.baomitu.com/marked/4.0.2/marked.min.js"></script>
@@ -22,6 +23,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/verilog.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 </head>
 
 <body>
@@ -280,7 +283,12 @@
   <!-- Note Modal -->
   <div id="note-modal" class="modal-overlay" onclick="handleOverlayClick(event)">
     <div class="modal-content">
-      <span class="close-modal" onclick="closeNote()">&times;</span>
+      <div class="close-modal font-size-controls">
+        <button onclick="changeFontSize(-2)" class="font-size-contrl">A-</button>
+        <button onclick="changeFontSize(2)" class="font-size-contrl">A+</button>
+        <span id="current-size-label" class="font-size-contrl font-fault" style="display: none;">字号: 默认</span>
+        <button onclick="closeNote()" class="note-close-btn">×</button>
+      </div>
       <div id="modal-body"></div>
     </div>
   </div>

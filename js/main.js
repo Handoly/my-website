@@ -463,18 +463,42 @@ function editPost(data, type) {
 
 // ==================== 6. 详情页处理 ====================
 
+// 默认初始字号数值（对应你的 xx-large，大约是 24-32px）
+let currentFontSize = 24; 
+
+function changeFontSize(delta) {
+    const content = document.querySelector('.markdown-body');
+    const label = document.getElementById('current-size-label');
+    
+    if (content) {
+        currentFontSize += delta;
+        
+        // 限制字号范围，防止过大或过小
+        if (currentFontSize < 14) currentFontSize = 14;
+        if (currentFontSize > 48) currentFontSize = 48;
+        
+        content.style.fontSize = currentFontSize + 'px';
+        if (label) label.innerText = `字号: ${currentFontSize}px`;
+    }
+}
+
 function openNote(note) {
     const modal = document.getElementById('note-modal');
     const body = document.getElementById('modal-body');
     let displayContent = note.content || '暂无详细描述';
     
-    // 1. 配置 marked 的高亮逻辑（只需配置一次，写在这里也很稳妥）
+    // 1. 健壮的代码高亮配置
     marked.setOptions({
         highlight: function(code, lang) {
-            const language = (lang || hljs.getLanguage(lang)) ? lang : 'plaintext';
-            return hljs.highlight(code, { language }).value;
+            // 如果语言存在且 hljs 能识别，则高亮；否则返回原代码避免崩溃
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(code, { language: lang }).value;
+                } catch (__ ) {}
+            }
+            return code; // 使用原代码内容
         },
-        langPrefix: 'hljs ' // 必须匹配 highlight.js 的 CSS 类名
+        langPrefix: 'hljs '
     });
 
     // 荣誉模板动态渲染
@@ -494,19 +518,33 @@ function openNote(note) {
             <div class="modal-detail-text markdown-body">${renderedContent}</div>
         </div>
     `;
-    smartTypeWriter('.modal-detail-title', 150, false); // 标题打字机效果
-    // 2. 渲染后：处理图片放大和代码高亮
-    // 我们把逻辑都放进这个 setTimeout 里，确保 DOM 已经加载完成
+
+    smartTypeWriter('.modal-detail-title', 150, false);
+
+    // 2. 渲染后的异步逻辑处理
     setTimeout(() => {
-        // 绑定正文图片点击放大
+        // A. 绑定正文图片点击放大
         body.querySelectorAll('.modal-detail-text img').forEach(img => {
             img.onclick = () => openImageViewer(img.src);
         });
 
-        // 🚀 核心逻辑：触发代码块高亮
+        // B. 🚀 核心逻辑：触发代码块高亮
         body.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightElement(block);
         });
+
+        // C. 🚀 核心逻辑：触发数学公式渲染 (KaTeX)
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
     }, 100);
 
     modal.style.display = 'block';
