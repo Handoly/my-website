@@ -463,26 +463,42 @@ function editPost(data, type) {
 
 // ==================== 6. 详情页处理 ====================
 
-// 默认初始字号数值（对应你的 xx-large，大约是 24-32px）
-let currentFontSize = 24; 
+// 1. 初始化：优先从本地存储读取字号，如果没有，则默认 20
+let currentFontSize = parseInt(localStorage.getItem('userFontSize')) || 20;
+
+// 2. 页面一加载就执行一次，确保恢复上次的设置
+window.addEventListener('DOMContentLoaded', () => {
+    updateUI();
+});
 
 function changeFontSize(delta) {
+    currentFontSize += delta;
+    
+    // 限制范围
+    if (currentFontSize < 14) currentFontSize = 14;
+    if (currentFontSize > 48) currentFontSize = 48;
+    
+    // 3. 关键：将新字号存入 localStorage
+    localStorage.setItem('userFontSize', currentFontSize);
+    
+    updateUI();
+}
+
+// 提取一个更新界面的函数，减少重复代码
+function updateUI() {
     const content = document.querySelector('.markdown-body');
     const label = document.getElementById('current-size-label');
     
     if (content) {
-        currentFontSize += delta;
-        
-        // 限制字号范围，防止过大或过小
-        if (currentFontSize < 14) currentFontSize = 14;
-        if (currentFontSize > 48) currentFontSize = 48;
-        
         content.style.fontSize = currentFontSize + 'px';
-        if (label) label.innerText = `字号: ${currentFontSize}px`;
+    }
+    if (label) {
+        label.innerText = `字号: ${currentFontSize}px`;
     }
 }
 
 function openNote(note) {
+
     const modal = document.getElementById('note-modal');
     const body = document.getElementById('modal-body');
     let displayContent = note.content || '暂无详细描述';
@@ -549,6 +565,7 @@ function openNote(note) {
 
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    updateUI(); // 确保每次打开详情页都应用用户设置的字号
 }
 
 function handleOverlayClick(event) {
