@@ -399,11 +399,7 @@ async function uploadToStorage() {
     urlInput.value = publicData.publicUrl;
     status.innerText = `✅ 成功 (${(uploadData.size / 1024).toFixed(1)}KB)`;
 }
-// ==================== 2. 图片压缩核心引擎 ====================
-/**
- * 核心：将图片压缩并转为 WebP 格式
- * 极大提升国内访问速度，减小 Supabase 存储压力
- */
+
 async function compressImage(file, maxWidth = 1200, quality = 0.7) {
     return new Promise((resolve) => {
         const reader = new FileReader();
@@ -458,15 +454,8 @@ function editPost(data, type) {
     }
 }
 
-// ==================== 5. 内容展示 (笔记/日常/荣誉) ====================
-
-
-// ==================== 6. 详情页处理 ====================
-
-// 1. 初始化：优先从本地存储读取字号，如果没有，则默认 20
 let currentFontSize = parseInt(localStorage.getItem('userFontSize')) || 20;
 
-// 2. 页面一加载就执行一次，确保恢复上次的设置
 window.addEventListener('DOMContentLoaded', () => {
     updateUI();
 });
@@ -474,17 +463,14 @@ window.addEventListener('DOMContentLoaded', () => {
 function changeFontSize(delta) {
     currentFontSize += delta;
     
-    // 限制范围
     if (currentFontSize < 14) currentFontSize = 14;
     if (currentFontSize > 48) currentFontSize = 48;
     
-    // 3. 关键：将新字号存入 localStorage
     localStorage.setItem('userFontSize', currentFontSize);
     
     updateUI();
 }
 
-// 提取一个更新界面的函数，减少重复代码
 function updateUI() {
     const content = document.querySelector('.markdown-body');
     const label = document.getElementById('current-size-label');
@@ -503,10 +489,8 @@ function openNote(note) {
     const body = document.getElementById('modal-body');
     let displayContent = note.content || '暂无详细描述';
     
-    // 1. 健壮的代码高亮配置
     marked.setOptions({
         highlight: function(code, lang) {
-            // 如果语言存在且 hljs 能识别，则高亮；否则返回原代码避免崩溃
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return hljs.highlight(code, { language: lang }).value;
@@ -517,7 +501,6 @@ function openNote(note) {
         langPrefix: 'hljs '
     });
 
-    // 荣誉模板动态渲染
     if (note.issuer || note.award_date) {
         displayContent = `### 🏆 ${note.title}\n**颁发机构：** ${note.issuer || '未知'}\n**获奖日期：** ${note.award_date || '未记录'}\n---\n${note.content || '暂无详细描述'}`;
     }
@@ -537,19 +520,15 @@ function openNote(note) {
 
     smartTypeWriter('.modal-detail-title', 150, false);
 
-    // 2. 渲染后的异步逻辑处理
     setTimeout(() => {
-        // A. 绑定正文图片点击放大
         body.querySelectorAll('.modal-detail-text img').forEach(img => {
             img.onclick = () => openImageViewer(img.src);
         });
 
-        // B. 🚀 核心逻辑：触发代码块高亮
         body.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightElement(block);
         });
 
-        // C. 🚀 核心逻辑：触发数学公式渲染 (KaTeX)
         if (typeof renderMathInElement === 'function') {
             renderMathInElement(body, {
                 delimiters: [
@@ -569,7 +548,6 @@ function openNote(note) {
 }
 
 function handleOverlayClick(event) {
-    // 只有点击的是 overlay 本身（背景），而不是它里面的子元素时，才关闭
     if (event.target.classList.contains('modal-overlay')) {
         closeNote();
     }
@@ -589,10 +567,6 @@ function openImageViewer(src) {
 function closeImageViewer() {
     document.getElementById('image-viewer').style.display = 'none';
 }
-
-// ==================== 7. 内容发布与上传 (含压缩逻辑) ====================
-
-
 
 async function uploadToContent() {
     const fileInput = document.getElementById('content-img-upload');
@@ -625,12 +599,6 @@ async function uploadToContent() {
     status.innerText = "✅ 已插入";
 }
 
-
-
-// ==================== 8. 管理逻辑 ====================
-
-
-
 async function deletePost() {
     const id = document.getElementById('edit-id').value;
     const type = document.getElementById('post-type').value;
@@ -643,10 +611,6 @@ async function deletePost() {
 }
 
 async function logoutAdmin() {
-    // if (confirm("退出管理模式？")) {
-    //     localStorage.removeItem('keep_admin_open');
-    //     location.reload();
-    // }
     const { error } = await supabaseClient.auth.signOut();
     if (error) console.error("退出失败");
     else {
@@ -662,8 +626,6 @@ function toggleFields() {
     document.getElementById('tips-fields').style.display = (type === 'tips') ? 'block' : 'none';
 }
 
-
-// 将逻辑封装成函数，放在 window.onload 外面，保持代码整洁
 function initThemePicker() {
     const configs = [
         { id: 'primary-picker', var: '--primary-color', storage: 'theme-primary' },
@@ -672,7 +634,6 @@ function initThemePicker() {
         { id: 'text-picker', var: '--text-color', storage: 'theme-text' }
     ];
 
-    // 初始化：从 LocalStorage 加载
     configs.forEach(item => {
         const saved = localStorage.getItem(item.storage);
         const picker = document.getElementById(item.id);
@@ -681,7 +642,6 @@ function initThemePicker() {
             picker.value = saved;
         }
         
-        // 监听输入
         picker.addEventListener('input', (e) => {
             const val = e.target.value;
             document.documentElement.style.setProperty(item.var, val);
@@ -689,14 +649,11 @@ function initThemePicker() {
         });
     });
 
-    // 面板开关逻辑
     const panel = document.getElementById('settings-panel');
     document.getElementById('settings-toggle').onclick = () => panel.classList.toggle('active');
 
-    // --- 新增：重置主题逻辑 ---
     const resetBtn = document.getElementById('reset-theme');
     
-    // 定义你的初始默认值
     const defaults = {
         '--primary-color': '#ba0000',
         '--card-bg': 'rgba(200, 191, 191, 0.8)',
@@ -706,26 +663,17 @@ function initThemePicker() {
 
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            // 1. 遍历并恢复默认值
             configs.forEach(item => {
                 const defaultValue = defaults[item.var];
-                
-                // 修改 CSS 变量
                 document.documentElement.style.setProperty(item.var, defaultValue);
-                
-                // 恢复选择器的颜色显示
                 const picker = document.getElementById(item.id);
                 if (picker) picker.value = defaultValue;
-                
-                // 清除本地存储
                 localStorage.removeItem(item.storage);
             });
             
             console.log("主题已重置为默认设置");
         });
     }
-
-    // 点击外部关闭面板
     document.addEventListener('click', (e) => {
         if (!panel.contains(e.target) && e.target.id !== 'settings-toggle') {
             panel.classList.remove('active');
@@ -733,31 +681,22 @@ function initThemePicker() {
     });
 }
 
-/**
- * 通用打字机函数（支持循环打印）
- * @param {HTMLElement|string} target - 可以是 DOM 对象，也可以是 CSS 选择器 (如 '.intro')
- * @param {number} speed - 打字速度
- * @param {number} loopDelay - 打印完成后，延迟多久重新开始（默认 1000 毫秒，即 1 秒）
- */
 function smartTypeWriter(target, speed = 100, isLoop = false, loopDelay = 10000) {
     const element = typeof target === 'string' ? document.querySelector(target) : target;
     if (!element) return;
 
-    // 1. 保存原始文本（只获取一次，避免后续清空后丢失）
     const originalText = element.innerText;
     element.innerText = '';
     element.style.visibility = 'visible';
 
     let i = 0;
 
-    // 2. 封装打字逻辑为独立函数，方便重复调用
     function typing() {
         if (i < originalText.length) {
             element.innerText += originalText.charAt(i);
             i++;
             setTimeout(typing, speed);
         } else {
-            // 3. 打字完成后，延迟一段时间再重置并重启
             if (isLoop) {
                 setTimeout(() => {
                     element.innerText = '';
@@ -767,25 +706,20 @@ function smartTypeWriter(target, speed = 100, isLoop = false, loopDelay = 10000)
             }
         }
     }
-
-    // 启动首次打字
     typing();
 }
 
 async function adminLogin() {
-    // --- 3. 登录触发器：保留你输入 "admin" 触发登录的习惯 ---
     const nameInput = document.getElementById("name-input");
     if (nameInput) {
         nameInput.value = localStorage.getItem('saved_username') || "";
         nameInput.addEventListener('input', async (e) => {
             if (e.target.value.trim() === "admin") {
                 e.target.value = "";
-                // 不再用 prompt，而是显示对话框
                 const dialog = document.getElementById('login-dialog');
                 dialog.showModal(); 
             }
 
-            // 处理表单提交
             document.getElementById('login-form').onsubmit = async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('login-email').value;
@@ -805,7 +739,6 @@ async function adminLogin() {
 
 function test() {
     window.alert("这是一个测试按钮，未来会有更多功能哦！敬请期待~");
-    // document.write('hello world');
     document.getElementById('settings-toggle').innerHTML = "⚙️ (测试成功)";
     console.log("测试按钮被点击了！");
 }
@@ -819,10 +752,8 @@ const audioPreview = document.getElementById('audio-preview');
 
 function initRecorder() {
 
-    // 1. 录音逻辑控制
     recordBtn.onclick = async () => {
         if (!mediaRecorder || mediaRecorder.state === "inactive") {
-            // 开始录音
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
             audioChunks = [];
@@ -839,7 +770,6 @@ function initRecorder() {
             recordBtn.style.backgroundColor = "#ff4d4f";
             statusSpan.innerText = "正在录音...";
         } else {
-            // 停止录音
             mediaRecorder.stop();
             recordBtn.innerText = "🎤 重新录制";
             recordBtn.style.backgroundColor = "";
@@ -848,22 +778,14 @@ function initRecorder() {
     };
 }
 
-
-
-// ==================== 9. 初始化启动 ====================
-
 window.onload = async () => {
-    // 恢复主题
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add("dark-mode");
         document.getElementById("theme-btn").innerHTML = "☀️";
     }
-
-    // --- 2. 核心：检查管理员权限 (替换原有的 localStorage 逻辑) ---
     const { data: { session } } = await supabaseClient.auth.getSession();
     
     if (session) {
-        // 如果已登录，显示所有后台面板
         document.getElementById('admin-panel').style.display = 'block';
         document.getElementById('thought-section').style.display = 'block';
         toggleFields();
@@ -874,7 +796,6 @@ window.onload = async () => {
 
     await Promise.all([loadComments(), loadNotes(), loadDailyLogs(), loadHonors(), loadTips()]);
     
-    // 实时更新留言
     supabaseClient.channel('comments').on('postgres_changes', { 
         event: '*', 
         schema: 'public', 
@@ -885,15 +806,11 @@ window.onload = async () => {
 
     initThemePicker();
 
-    
-
     const loader = document.getElementById('loading-screen');
     if (loader) { 
         loader.style.opacity = '0'; 
         setTimeout(() => loader.style.display = 'none', 500); 
     }
-
-    //window.alert("欢迎来到我的个人空间！🎉\n\n这是一个记录我生活点滴和分享小知识的地方，希望你能喜欢这里的内容！如果有任何建议或者想法，欢迎在留言区告诉我哦！😊");
 
     smartTypeWriter('.typewriter-text', 150, true, 10000);
 }; 
