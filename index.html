@@ -40,12 +40,13 @@
       <!-- ========== Navigation Bar ========== -->
     <nav class="navbar">
       
+      <!-- logo区 -->
       <div class="logo">
         <button id="settings-toggle" class="settings-toggle">⚙️</button>
-        <button id="test-btn" class="test-btn" onclick="test()">🏆测试1</button>
         <a href="./pages/gallery.html" target="_blank">🖼️gallery</a>
       </div>
 
+      <!-- 颜色定制面板 -->
       <div id="settings-panel" class="settings-panel">
         <h3>界面定制</h3>
         <hr>
@@ -68,8 +69,12 @@
         <button id="reset-theme">恢复默认</button>
       </div>
 
+      <!-- 媒体查询：响应式设计，在手机上只显示汉堡包
+      菜单栏默认隐藏，点击汉堡包后显示菜单栏 -->
+      <!-- 手机端的汉堡包图标 -->
       <div class="hamburger" onclick="toggleMenu()">☰</div>
 
+      <!-- 菜单栏 -->
       <div class="menu" id="nav-menu">
         <a href="#">首页</a>
         <a href="https://www.bilibili.com/" target="_blank">哔哩哔哩</a>

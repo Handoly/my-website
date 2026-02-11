@@ -96,27 +96,30 @@ body {
     } 
 }
 
+/* ==========导航栏设计============== */
 .navbar {
-    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    display: flex; 
+    box-sizing: border-box; 
+    /* 固定在顶部 */
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 60px;
     background-color: var(--nav-bg);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex; 
     justify-content: space-between; 
     align-items: center;
-    padding: 0 20px; box-sizing: border-box; z-index: 1000;
+    padding: 0 20px; 
+    z-index: 1000;
 }
-
+/* logo区设计 */
 .logo { 
     font-size: 20px; 
     font-weight: bold; 
     color: var(--primary-color); 
 }
-
-.logo a {
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
+/* logo区中页面颜色定制按钮样式 */
 .settings-toggle {
     background-color: var(--primary-color);
     color: white;
@@ -125,11 +128,17 @@ body {
     cursor: pointer;
     z-index: 1001;
 }
-
-/* 设置面板样式 */
+/* logo区中的链接样式设计 */
+.logo a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+/* 颜色定制面板样式 */
 .settings-panel {
+    /* 不受其他元素影响，固定布局 */
     position: fixed;
-    right: -300px; /* 初始隐藏 */
+    /* 初始隐藏颜色定制面板 */
+    right: -300px;
     top: 0;
     width: 250px;
     height: 100%;
@@ -140,24 +149,18 @@ body {
     padding: 20px;
     z-index: 1000;
 }
-
+/* 颜色定制面板样式 点击齿轮后显示 */
 .settings-panel.active { 
     right: 0; /* 显示面板 */
 }
-
+/* 颜色定制面板中的项目样式 */
 .setting-item {
     margin: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
-.hamburger { 
-    display: none; 
-    font-size: 24px; 
-    cursor: pointer; 
-}
-
+/* 菜单栏中的链接样式 */
 .menu a {
     text-decoration: none; 
     color: var(--text-color);
@@ -165,13 +168,27 @@ body {
     font-size: 14px; 
     transition: color 1s;
 }
-
 .menu a:hover { 
     color: var(--primary-color); 
 }
+#theme-btn { 
+    border: none; 
+    background: transparent; 
+    cursor: pointer; 
+    font-size: 18px; 
+    margin-left: 20px; 
+}
 
-#theme-btn { border: none; background: transparent; cursor: pointer; font-size: 18px; margin-left: 20px; }
-
+/* 
+媒体查询：响应式设计，在手机上只显示汉堡包
+菜单栏默认隐藏，点击汉堡包后显示菜单栏
+*/
+/* 汉堡包样式设计 */
+.hamburger { 
+    display: none; 
+    font-size: 24px; 
+    cursor: pointer; 
+}
 @media (max-width: 768px) {
     .hamburger { 
         display: block; /*在手机上让菜单按钮显示，仅此作用，block功能被flex覆盖*/
@@ -196,10 +213,9 @@ body {
         font-size: 18px; 
     }
 }
-
+/* 用于占位，防止内容被固定导航栏遮挡 */
 .nav-spacer { 
     height: 80px; 
-    /* 用于占位，防止内容被固定导航栏遮挡 */
 }
 
 .intro-text {
@@ -402,6 +418,15 @@ body {
 .note-info h5 { 
     margin: 0; 
     font-size: 14px; 
+    /* 必须是 block 或 inline-block */
+    display: -webkit-box;
+    /* 限制显示的行数 */
+    -webkit-line-clamp: 2; 
+    /* 设置伸缩盒子的子元素排列方式 */
+    -webkit-box-orient: vertical;
+    /* 隐藏溢出部分并显示省略号 */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .note-tag { 

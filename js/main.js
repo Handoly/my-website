@@ -737,12 +737,6 @@ async function adminLogin() {
     }
 }
 
-function test() {
-    window.alert("这是一个测试按钮，未来会有更多功能哦！敬请期待~");
-    document.getElementById('settings-toggle').innerHTML = "⚙️ (测试成功)";
-    console.log("测试按钮被点击了！");
-}
-
 let mediaRecorder;
 let audioChunks = [];
 let audioBlob = null; // 存储最终生成的音频文件
