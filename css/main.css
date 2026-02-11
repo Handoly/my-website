@@ -1,7 +1,7 @@
 /* ==================== 1. 变量系统 ==================== */
 :root {
     /* --primary-color: #008CBA; */
-    --bg-image: url('https://images.pexels.com/photos/33673336/pexels-photo-33673336.jpeg');
+    --bg-image: url('https://thumbnail.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/406/resize/w/540/h/406/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_jpg%2FKgTywNkY623sTic1uAmb9LJlQPMQm7gq9FqP9CH0sVy84dLxcpjPDGrUMduUDaJHpw0FJUjbmJibEiaU3qldq4Pxg%2F640%3Fwx_fmt%3Djpeg%26from%3Dappmsg');
     --primary-color: #ba0000;
     --bg-color: #f0f8ff;
     --card-bg: rgba(200, 191, 191, 0.8);
