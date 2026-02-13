@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 个人网页头部 */
+.header {
+    display: flex;
+    height: 50px;
+    background-color: #564dff;
+    justify-content: space-between;
+    align-items: center;
+    color: aliceblue;
+}
+
+/* 网页背景 */
+body {
+    background-color: rgb(237, 237, 237);
+}
+
+/* 版心 */
+.w {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #f7ecec;
+}
+
+/* 网页主体 */
+.main {
+    width: 95%;
+    /* 居中 */
+    margin: 0 auto;
+    /* 高度占满屏幕 */
+    height: 1000px;
+    
+}
+
+/* 占位符 */
+.spacer {
+    height: 10px;
+}
+
+/* 文章 */
+.artical {
+    display: flex;
+    background-color: rgb(247, 238, 242);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px 0 0 10px;
+    border-bottom: 5px dashed #2f85b0;
+    border-left: 20px solid rgb(67, 230, 248);
+    transition: all 10s ease-in-out;
+}
+.artical:hover {
+    box-shadow: 5px 5px 5px rgb(42, 166, 255);
+    border-bottom: none;
+    /* transform: translate(-10px); */
+    transform: rotate(100turn);
+}
+
+/* 文章信息 */
+.artical-info {
+    flex: 6;
+    background-color: #eef5ee;
+    margin: 10px 0 10px 10px;
+    border-radius: 10px 0 0 10px ;
+}
+
+/* 文章头部 */
+.artical-header {
+    display: flex;
+    border-bottom: 1px solid grey;
+    margin: 0 10px;
+    align-items: center;
+}
+
+/* 文章类型 */
+.artical-type {
+    background-color: #38f87836;
+    border: 3px solid rgb(112, 237, 81);
+    border-radius: 20px;
+    padding: 5px;
+    font-size: small;
+    font-weight: 500;
+    color: rgb(36, 37, 37);
+}
+
+/* 文章标题 */
+.artical-title {
+    color: #141b1f;
+    margin: 10px ;
+    padding-left: 5px;
+    border-left: 1px solid black;
+}
+
+/* 文章的部分内容 */
+.artical-content {
+    margin: 10px;
+}
+.artical-content p {
+    color: #6b7980;
+        /* 必须是 block 或 inline-block */
+    display: -webkit-box;
+    /* 限制显示的行数 */
+    -webkit-line-clamp: 6; 
+    /* 设置伸缩盒子的子元素排列方式 */
+    -webkit-box-orient: vertical;
+    /* 隐藏溢出部分并显示省略号 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 140px;
+}
+
+/* 文章图片 */
+.artical-pictures {
+    flex: 2;
+    background-color: #4db4f4;
+    margin: 10px 10px 10px 0;
+    border-radius: 0 10px 10px 0;
+}
+.artical-pictures img {
+
+}
