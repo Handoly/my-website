@@ -257,10 +257,14 @@ body {
     /* max-width: 500px;  */
     margin: 20px auto;
     background: var(--card-bg); 
-    padding: 30px;
+    padding: 10px 30px;
     border-radius: 10px; 
     text-align: left; 
     box-shadow: var(--shadow);
+}
+
+.container h3 {
+    margin: 10px 0px;
 }
 
 /* 荣誉墙网格 - 修复右侧空白问题 */
@@ -552,6 +556,11 @@ button:disabled {
 .thought-container {
     display: none; 
     border-top: 5px solid var(--thought-orange);
+}
+
+.thoughts-container {
+    max-height: 400px; 
+    overflow-y: scroll; 
 }
 
 .btn-thought { 
