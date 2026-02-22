@@ -7,17 +7,62 @@
     <link rel="stylesheet" href="./css/main_new.css">
 </head>
 <body>
-    <!--  个人网页头部  -->
+    <!--  ========================================个人网页头部=====================================  -->
     <div class="header">
         <div class="logo">1</div>
         <div class="link">2</div>
     </div>
 
-    <!-- 网页主体部分 -->
+    <!-- 占位符 -->
+    <div class="spacer"></div>
+
+    <!-- 网页版心 -->
     <div class="w">
+        <!-- ===================================左侧侧边栏========================================== -->
+        <div class="left-sidebar">
+            <!-- ===============左上角目录=============== -->
+            <div class="catalog">
+                <div class="catalog-title">Catalog</div>
+                <div class="catalog-content">
+                    <ul>
+                        <li>👋全部</li>
+                        <li>🏆荣誉与奖项</li>
+                        <li>📝学习笔记
+                            <ul>
+                                <li>FPGA</li>
+                                <li>Flutter</li>
+                                <li>网站</li>
+                                <li>AI</li>
+                                <li>陀螺</li>
+                                <li>电路</li>
+                                <li>日文</li>
+                            </ul>
+                        </li>
+                        <li>🎯日常生活</li>
+                        <li>🤔一些小知识</li>
+                    </ul> 
+                </div>
+            </div>
+            <!-- ===============左下每日记录/待办/目标展示========== -->
+            <div class="productivity-system">
+                <div class="productivity-system-title"><time></time>Productivity System</div>
+                <div class="productivity-system-content">
+                    <ul>
+                        <li>1.学fpga✔️</li>
+                        <li>
+                            <ul>
+                                <li>1.阻塞赋值和非阻塞赋值✔️</li>
+                                <li>2.计数器✔️</li>
+                            </ul>
+                        </li>
+                        <li>2.写新的个人网页✔️</li>
+                        <li>3.散步✔️</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- ===================================网页主体内容==================================== -->
         <div class="main">
-            <!-- 占位符 -->
-            <div class="spacer"></div>
             <!-- 文章 -->
             <div class="artical">
                 <!-- 文章信息 -->
@@ -32,30 +77,507 @@
                     </div>
                     <!-- 文章部分内容 -->
                     <div class="artical-content">
-                        <p> 安全通讯软件 (Signal App)
-                            这就是那款大名鼎鼎、主打**极致隐私**的通讯工具。
-                            **为什么出名：** 它的端到端加密协议（Signal Protocol）
-                            被公认为行业标杆，连 WhatsApp 和 Google Messages 都在
-                            **它的风格：** 它是非营利组织运营的，不收集用户数据
-                            - **冷知识：** 爱德华·斯诺登和马斯克都曾公开推荐过它。
-                            以下是针对不同设备的下载指南：
-                            ### 1. 移动端（手机/平板）
-                            这是最常用的方式，Signal 必须先在手机上注册才能在电脑上使用。
-                            - **iPhone / iPad:** * 直接在 **App Store** 搜索 “Sign
-                            ### 1. 移动端（手机/平板）
-                            这是最常用的方式，Signal 必须先在手机上注册才能在电脑上使用。
-                            - **iPhone / iPad:** * 直接在 **App Store** 搜索 “Sign
-                            ### 1. 移动端（手机/平板）
-                            这是最常用的方式，Signal 必须先在手机上注册才能在电脑上使用。
-                            - **iPhone / iPad:** * 直接在 **App Store** 搜索 “Sign
+                        <p>
+                            # 计数器
+
+计数是一种最简单基本的运算，计数器就是实现这种运算的逻辑电路，计数器在数字系统中主要是对脉冲的个数进行计数，以实现测量、计数和控制的功能，同时兼有分频功能。
+计数器在数字系统中应用广泛，如电子计算机的控制器中对指令地址进行计数，以便顺序取出下一条指令，在运算器中作乘法、除法运算时记下加法、减法次数，又如在数字仪器中对脉冲的计数等等。
+
+## 设计流程
+
+![描述](https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/content-1770032146448.webp)
+
+## 设计规划
+
+### 新建文件夹
+
+在**FPGA_Pro**文件夹中新建**counter**文件夹，在**counter**文件夹中新建以下四个文件夹
+
+![描述](https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/content-1770086172871.webp)
+
+### 功能实现
+
+实现一个具有计数器功能的电路，计数的时间间隔为1秒。
+
+使用板载的led灯在前0.5秒点亮，后0.5秒熄灭。
+
+## 波形绘制
+
+在**doc**文件夹下新建**visio**文件，绘制波形
+
+![image-20260214145053435](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214145053435.png)
+
+## 代码编写
+
+在rtl文件夹中新建.v文件：先新建文本文档，命名为led修改后缀名为.v
+双击打开.v文件，编写代码
+
+```verilog
+module  counter
+#(
+    parameter   CNT_MAX = 25'd24_999_999  
+)
+(
+
+    input wire      sys_clk     ,
+    input wire      sys_rst_n   ,
+    
+    output reg      led_out     
+    
+);
+
+/*其他方式的参数定义 
+parameter   CNT_MAX = 25'd24_999_999;
+localparam  CNT_MAX = 25'd24_999_999;
+*/
+
+reg [24:0]  cnt;
+
+always@(posedge sys_clk or negedge  sys_rst_n)
+    if(sys_rst_n == 1'b0)
+        cnt <= 25'd0;
+    else if(cnt == CNT_MAX)
+        cnt <= 25'd0;
+    else
+        cnt <= cnt + 25'd1;
+
+always@(posedge sys_clk or negedge  sys_rst_n)
+    if(sys_rst_n == 1'b0)
+        led_out <= 1'd0;
+    else if(cnt == CNT_MAX)
+        led_out <= ~led_out;
+    else
+        led_out <= led_out;
+        
+/*带有参数的实例化，实例化名称写在下面
+
+counter
+#(
+    .CNT_MAX     (100)  
+)counter_inst           
+(                
+                 
+    .sys_clk     (sys_clk),
+    .sys_rst_n   (sys_rst_n),
+                 
+    .led_out     (led_out),
+    
+);
+
+*/
+
+endmodule
+```
+
+## 代码编译
+
+rtl视图如下：
+
+![image-20260214150408305](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214150408305.png)
+
+## 逻辑仿真
+
+仿真代码编写
+
+```verilog
+`timescale  1ns/1ns
+
+module tb_counter();
+
+reg sys_clk;
+reg sys_rst_n;
+
+wire led_out;
+
+initial 
+    begin
+    
+        sys_clk = 1'b1;
+        sys_rst_n <= 1'b0;
+        #20;
+        sys_rst_n <= 1'b1;
+    
+    end
+    
+always #10 sys_clk = ~sys_clk ;
+
+initial
+    begin
+        $timeformat(-9,0,"ns",6);
+        $monitor("@time %t:sys_clk=%b  sys_rst_n=%b led_out=%b", $time, sys_clk, sys_rst_n, led_out);
+    end
+
+counter
+#(
+    .CNT_MAX(25'd24)  
+)counter_inst
+(
+
+    .sys_clk   (sys_clk)  ,
+    .sys_rst_n (sys_rst_n)  ,
+
+    .led_out   (led_out)  
+    
+);
+
+endmodule
+```
+
+## 波形对比
+
+时间参数设置为10us
+
+![image-20260214152040211](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214152040211.png)
+
+## 管脚绑定
+
+**系统时钟**与FPGA芯片的**E1**管脚连接，复位按键与M15连接
+
+![描述](https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/content-1770093006436.webp)
+
+**D6**与FPGA芯片的**L7**管脚连接
+
+![描述](https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/content-1770093350474.webp)
+
+## 分析综合布局布线
+
+## 上板验证
+
+上板验证失败，因为我没有开发板😂
+
+---
+
+# 另一种“显得多此一举”的方法
+
+波形绘制中定义一个新的变量脉冲信号`cnt_flag`
+
+当复位信号有效时，保持低电平；当计数器计数到最大值时，先不对输出进行取反，而是让flag信号产生一个时钟周期的高脉冲，输出信号检测到有脉冲后进行取反
+
+![image-20260214153630514](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214153630514.png)
+
+但这样的话，输出信号与计数信号没有对应上，这是不规范的
+
+修改波形
+
+![image-20260214153704762](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214153704762.png)
+
+当计数信号计数到n/2-2时让标志信号产生一个时钟的高脉冲，输出信号检测到有脉冲后进行取反，此时输出信号与计数信号对应
+
+这样的好处：可以使代码中if括号内的条件更加清晰简洁，当其他地方也需要使用时，更节约逻辑资源，且脉冲标志信号在指示某些状态时是非常有用的。
+
+修改代码，添加标志变量
+
+```verilog
+module  counter
+#(
+    parameter   CNT_MAX = 25'd24_999_999  
+)
+(
+
+    input wire      sys_clk     ,
+    input wire      sys_rst_n   ,
+    
+    output reg      led_out     
+    
+);
+
+/*其他方式的参数定义 
+parameter   CNT_MAX = 25'd24_999_999;
+localparam  CNT_MAX = 25'd24_999_999;
+*/
+
+reg [24:0]  cnt;
+reg         cnt_flag;
+
+always@(posedge sys_clk or negedge  sys_rst_n)
+    if(sys_rst_n == 1'b0)
+        cnt <= 25'd0;
+    else if(cnt == CNT_MAX)
+        cnt <= 25'd0;
+    else
+        cnt <= cnt + 25'd1;
+        
+always@(posedge sys_clk or negedge  sys_rst_n)
+    if(sys_rst_n == 1'b0)
+        cnt_flag <= 1'b0;
+    else if(cnt == CNT_MAX-25'd1)
+        cnt_flag <= 1'b1;
+    else
+        cnt_flag <= 1'b0;
+        
+always@(posedge sys_clk or negedge  sys_rst_n)
+    if(sys_rst_n == 1'b0)
+        led_out <= 1'd0;
+    else if(cnt_flag == 1'b1)
+        led_out <= ~led_out;
+    else
+        led_out <= led_out;
+        
+/*带有参数的实例化，实例化名称写在下面
+
+counter
+#(
+    .CNT_MAX     (100)  
+)counter_inst           
+(                
+                 
+    .sys_clk     (sys_clk),
+    .sys_rst_n   (sys_rst_n),
+                 
+    .led_out     (led_out),
+    
+);
+
+*/
+
+endmodule
+```
+
+rtl视图如下：
+
+![image-20260214154338967](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214154338967.png)
+
+进行仿真，波形如下：
+
+![image-20260214154648073](https://fastly.jsdelivr.net/gh/Handoly/web-site-images@main/imgimage-20260214154648073.png)
                         </p>
+                        <div class="artical-footer">
+                            <!-- 创建时间 -->
+                             <span class="artical-create-time">2022-02-14 15:46:48</span>
+                        </div>
                     </div>
                 </div>
-                <!-- 图片 -->
+                <!-- 图片区域 -->
                 <div class="artical-pictures">
+                    <!-- 使用grid布局 -->
+                    <div class="grid-artical-pictures">
+                        <!-- grid项目 -->
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/382/resize/w/540/h/382/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_jpg%2FewyEmyOkIKhtjejQ71u3O1ib2QWxtSIJVUKdYQrSZyptwMhib9mFytUdbNWB7FbH9TicicIxIFA6oWmvmXrDiazVleA%2F640%3Fwx_fmt%3Djpeg%26from%3Dappmsg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="artical">
+                <!-- 文章信息 -->
+                <div class="artical-info">
+                    <div class="artical-header">
+                        <!-- 文章类型 -->
+                        <span class="artical-type">小知识点</span>
+                        <!-- 文章标题 -->
+                        <span class="artical-title">
+                            <h2>安全通讯软件 (Signal App)</h2>
+                        </span>
+                    </div>
+                    <!-- 文章部分内容 -->
+                    <div class="artical-content">
+                        <p></p>
+                        <div class="artical-footer">
+                            <!-- 创建时间 -->
+                             <span class="artical-create-time">2022-02-14 15:46:48</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 图片区域 -->
+                <div class="artical-pictures">
+                    <!-- 使用grid布局 -->
+                    <div class="grid-artical-pictures">
+                        <!-- grid项目 -->
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="artical">
+                <!-- 文章信息 -->
+                <div class="artical-info">
+                    <div class="artical-header">
+                        <!-- 文章类型 -->
+                        <span class="artical-type">小知识点</span>
+                        <!-- 文章标题 -->
+                        <span class="artical-title">
+                            <h2>安全通讯软件 (Signal App)</h2>
+                        </span>
+                    </div>
+                    <!-- 文章部分内容 -->
+                    <div class="artical-content">
+                        <p></p>
+                    </div>
+                </div>
+                <!-- 图片区域 -->
+                <div class="artical-pictures">
+                    <!-- 使用grid布局 -->
+                    <div class="grid-artical-pictures">
+                        <!-- grid项目 -->
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="artical">
+                <!-- 文章信息 -->
+                <div class="artical-info">
+                    <div class="artical-header">
+                        <!-- 文章类型 -->
+                        <span class="artical-type">小知识点</span>
+                        <!-- 文章标题 -->
+                        <span class="artical-title">
+                            <h2>安全通讯软件 (Signal App)</h2>
+                        </span>
+                    </div>
+                    <!-- 文章部分内容 -->
+                    <div class="artical-content">
+                        <p></p>
+                    </div>
+                </div>
+                <!-- 图片区域 -->
+                <div class="artical-pictures">
+                    <!-- 使用grid布局 -->
+                    <div class="grid-artical-pictures">
+                        <!-- grid项目 -->
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                        <div class="grid-item">
+                            <img src="https://thumbnail01.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/405/resize/w/540/h/405/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_png%2FowpcsRjbACGXhrzN9n1aibaVibBKKHk3y2rMm9zVKVWOtiac3dCN2rp4gBRympXO9KgEypvvicf0BaWbxdWAJOjVmQ%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg" alt="signal">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- ===================================右侧侧边栏========================================== -->
+        <div class="right-sidebar">
+            <!-- ====================右上角个人信息========================= -->
+            <div class="about">
+                <div class="about-title">About</div>
+                <div class="about-avatar">
+                    <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="">
+                </div>
+                <div class="about-tags">
+                    <span class="tag">985</span>
+                    <span class="tag">硕士</span>
+                    <span class="tag">仪科</span>
+                    <span class="tag">MEMS</span>
+                    <span class="tag">Embedded</span>
+                    <span class="tag">Hardware</span>
+                    <span class="tag">Software</span>
+                    <span class="tag">Electronic</span>
+                    <span class="tag">Dance</span>
+                    <span class="tag">Music</span>
+                    <span class="tag">Photography</span>
+                    <span class="tag">Travel</span>
+                    <span class="tag">Reading</span>
+                    <span class="tag">Writing</span>
+                    <span class="tag">Design</span>
+                </div>
+            </div>
+            <!-- ====================右下角留言板======================== -->
+            <div class="message">
+                <div class="message-title">Message</div>
+                <div class="message-contents">
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                    <div class="message-item">
+                        <span class="message-avatar">
+                            <img src="https://hatfniprpjrjwzmximna.supabase.co/storage/v1/object/public/notes-images/yovhfm1o7g-1770009135450.webp" alt="邓万穿" title="邓万穿">
+                        </span>
+                        <span class="message-text">
+                            <p>你好，我是邓万穿，欢迎来到我的博客！</p>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <!--  ========================================个人网页底部=====================================  -->
+    <div class="footer">
+        <p>© 2026-2035 邓万穿 😎 | Powered by Myself</p>
     </div>
 </body>
 </html>

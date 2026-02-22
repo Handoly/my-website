@@ -1,39 +1,39 @@
 * {
+    /* 外边距为0 */
     margin: 0;
+    /* 内边距为0 */
     padding: 0;
+    /* 盒子尺寸计算：包括外边距和边框 */
     box-sizing: border-box;
 }
 
-/* 个人网页头部 */
-.header {
-    display: flex;
-    height: 50px;
-    background-color: #564dff;
-    justify-content: space-between;
-    align-items: center;
-    color: aliceblue;
+ul, ol, li  {
+    /* 取消列表默认的列表符号 */
+    list-style: none;
 }
 
 /* 网页背景 */
 body {
+    /* 背景颜色 */
     background-color: rgb(237, 237, 237);
+    /* 背景图片 */
+    background-image: url('https://thumbnail.wxqcloud.qq.com.cn/v2/thumb/retype_exclude_gif/ext/auto/q/95/crop/xy/ai/w/540/h/406/resize/w/540/h/406/t/0?appid=201023&url=https%3A%2F%2Fmmbiz.qpic.cn%2Fsz_mmbiz_jpg%2FKgTywNkY623sTic1uAmb9LJlQPMQm7gq9FqP9CH0sVy84dLxcpjPDGrUMduUDaJHpw0FJUjbmJibEiaU3qldq4Pxg%2F640%3Fwx_fmt%3Djpeg%26from%3Dappmsg');
 }
 
-/* 版心 */
-.w {
-    width: 80%;
-    margin: 0 auto;
-    background-color: #f7ecec;
-}
-
-/* 网页主体 */
-.main {
-    width: 95%;
-    /* 居中 */
-    margin: 0 auto;
-    /* 高度占满屏幕 */
-    height: 1000px;
-    
+/* 个人网页头部 */
+.header {
+    /* 使用弹性盒子布局 */
+    display: flex;
+    /* 高度50像素 */
+    height: 50px;
+    /* 背景颜色 */
+    background-color: #564dffc9;
+    /* 两边对齐 */
+    justify-content: space-between;
+    /* 垂直居中 */
+    align-items: center;
+    /* 字体颜色 */
+    color: aliceblue;
 }
 
 /* 占位符 */
@@ -41,66 +41,332 @@ body {
     height: 10px;
 }
 
+/* 版心 */
+.w {
+    /* 宽度占页面80% */
+    width: 99%;
+    /* 居中 */
+    margin: 0 auto;
+    /* 背景颜色 */
+    background-color: #f7ececd4;
+    /* 弹性布局 */
+    display: flex;
+}
+
+/* =====================================左侧栏====================================== */
+.left-sidebar {
+    /* 弹性布局占比 */
+    flex: 2;
+    /* 背景颜色 */
+    background-color: #c6d4cb1a;
+}
+
+/* =========================左上角目录========================== */
+/* 目录 */
+.catalog {
+    /* 高度自动 */
+    height: fit-content;
+    /* 背景颜色 */
+    background-color: #e0d8d8b7;
+    /* 内边距 */
+    padding: 1px 5px;
+    /* 过渡样式 */
+    transition: all .5s ease-in-out;
+}
+.catalog:hover {
+    /* 目录阴影 */
+    box-shadow: -5px 5px 5px rgb(255, 78, 8);
+    /* 变换 */
+    transform: translate(10px,2px);
+    /* 层级 */
+    z-index: 100;
+}
+
+/* 目录标题 */
+.catalog-title {
+    /* 文字居中 */
+    text-align: center;
+    /* 背景颜色 */
+    background-color: #eaf2eda9;
+    /* 外边距 */
+    margin: 10px;
+}
+
+/* 目录内容 */
+.catalog-content {
+    /* 外边距 */
+    margin: 5px;
+    /* 背景颜色 */
+    background-color: #bdd7f12e;
+}
+
+/* 列表项左缩进 */
+.catalog-content ul {
+    /* 外边距 */
+    margin: 10px 2px;
+    /* 左内边距 */
+    padding-left: 5px;
+    /* 给子菜单加个左边框线，更有设计感 */
+    border-left: 3px groove #38f878; 
+    /* 字体大小 */
+    font-size: large;
+    /* 字体粗细 */
+    font-weight: 500;
+}
+
+/* 一级列表项样式 */
+.catalog-content>ul>li {
+    /* 外边距 */
+    margin: 8px 0;
+    /* 字体颜色 */
+    color: #333;
+    /* 鼠标悬停样式 */
+    cursor: pointer;
+    /* 过渡样式 */
+    transition: all .7s;
+}
+/* 一级列表项鼠标悬停样式 */
+.catalog-content>ul>li:hover {
+    /* 字体颜色 */
+    color: #ff1d09;
+    /* 背景颜色 */
+    background-color: #ffffff99;
+}
+
+/* 二级菜单样式 */
+.catalog-content li ul {
+    /* 上外边距 */
+    margin-top: 5px;
+    /* 给子菜单加个左边框线，更有设计感 */
+    border-left: 3px groove #38f878; 
+    /* 左内边距 */
+    padding-left: 20px;
+}
+
+/* 二级菜单项样式 */
+.catalog-content li ul li {
+    /* 字体大小 */
+    font-size: 0.9em;
+    /* 字体尺寸 */
+    color: #666;
+}
+.catalog-content li ul li:hover {
+    /* 字体颜色 */
+    color: #f200ff;
+    /* 背景颜色 */
+    background-color: #e5f1acdb;
+}
+
+/* =======================左下角效能系统=========================== */
+/* 目录 */
+.productivity-system {
+    /* 高度自动 */
+    height: fit-content;
+    /* 背景颜色 */
+    background-color: #e0d8d833;
+    /* 内边距 */
+    padding: 1px 5px;
+    /* 过渡样式 */
+    transition: all .5s ease-in-out;
+}
+.productivity-system:hover {
+    /* 目录阴影 */
+    box-shadow: -5px 5px 5px rgb(252, 0, 227);
+    /* 变换 */
+    transform: translateX(10px);
+}
+
+/* 目录标题 */
+.productivity-system-title {
+    /* 文字居中 */
+    text-align: center;
+    /* 背景颜色 */
+    background-color: #eaf2ed37;
+    /* 外边距 */
+    margin: 10px;
+}
+
+/* 目录内容 */
+.productivity-system-content {
+    /* 外边距 */
+    margin: 5px;
+    /* 背景颜色 */
+    background-color: #bdd7f139;
+    /* 高度固定 */
+    height: 200px;
+    /* 超出部分滚动条 */
+    overflow-y: scroll;
+}
+
+/* 列表项左缩进 */
+.productivity-system-content ul {
+    /* 外边距 */
+    margin: 10px 2px;
+    /* 左内边距 */
+    padding-left: 5px;
+    /* 给子菜单加个左边框线，更有设计感 */
+    border-left: 3px groove #38f878; 
+    /* 字体大小 */
+    font-size: large;
+    /* 字体粗细 */
+    font-weight: 500;
+}
+
+/* 一级列表项样式 */
+.productivity-system-content>ul>li {
+    /* 外边距 */
+    margin: 8px 0;
+    /* 字体颜色 */
+    color: #333;
+    /* 鼠标悬停样式 */
+    cursor: pointer;
+    /* 过渡样式 */
+    transition: all .7s;
+}
+/* 一级列表项鼠标悬停样式 */
+.productivity-system-content>ul>li:hover {
+    /* 字体颜色 */
+    color: #ff1d09;
+    /* 背景颜色 */
+    background-color: #ffffff99;
+}
+
+/* 二级菜单样式 */
+.productivity-system-content li ul {
+    /* 上外边距 */
+    margin-top: 5px;
+    /* 给子菜单加个左边框线，更有设计感 */
+    border-left: 3px groove #38f878; 
+    /* 左内边距 */
+    padding-left: 20px;
+}
+
+/* 二级菜单项样式 */
+.productivity-system-content li ul li {
+    /* 字体大小 */
+    font-size: 0.9em;
+    /* 字体尺寸 */
+    color: #666;
+}
+.productivity-system-content li ul li:hover {
+    /* 字体颜色 */
+    color: #f200ff;
+    /* 背景颜色 */
+    background-color: #e5f1acdb;
+}
+
+
+/* =========================================网页主体========================================== */
+.main {
+    flex: 8;
+    /* 居中 */
+    margin: 0 auto;
+    /* 高度占满屏幕 */
+    height: 630px;
+    /* 超出部分滚轮滚动 */
+    overflow-y: scroll;
+    /* 左边框作为分割线 */
+    border-left: 1px solid rgb(233, 233, 233);
+    /* 距离左边框10px */
+    padding-left: 10px;
+    /* 右边框作为分割线 */
+    border-right: 1px solid rgb(227, 227, 227);
+    /* 距离右边框10px */
+    padding-right: 10px;
+}
+
 /* 文章 */
 .artical {
+    /* 使用弹性盒子布局 */
     display: flex;
-    background-color: rgb(247, 238, 242);
+    /* 背景颜色 */
+    background-color: rgba(247, 238, 242, 0.2);
+    /* 上外边距 */
     margin-top: 10px;
+    /* 下外边距 */
     margin-bottom: 10px;
+    /* 边框圆角 */
     border-radius: 10px 0 0 10px;
-    border-bottom: 5px dashed #2f85b0;
-    border-left: 20px solid rgb(67, 230, 248);
-    transition: all 10s ease-in-out;
+    /* 左边框样式 */
+    border-left: 10px solid rgb(64, 139, 252);
+    /* 过渡样式 */
+    transition: all .5s ease-in-out;
 }
 .artical:hover {
-    box-shadow: 5px 5px 5px rgb(42, 166, 255);
+    /* 下边框 */
     border-bottom: none;
-    /* transform: translate(-10px); */
-    transform: rotate(100turn);
+     /* 左边框样式 */
+    border-left: 20px solid rgb(64, 139, 252);
+    /* 盒子阴影 */
+    box-shadow: 5px 5px 5px rgb(13, 78, 123);
+    /* 变换 */
+    transform: translate(1px);
 }
 
 /* 文章信息 */
 .artical-info {
-    flex: 6;
-    background-color: #eef5ee;
+    /* 宽度占12/8 */
+    flex: 12;
+    /* 背景颜色 */
+    background-color: #eef5ee3d;
+    /* 外边距 */
     margin: 10px 0 10px 10px;
+    /* 边框圆角 */
     border-radius: 10px 0 0 10px ;
 }
 
 /* 文章头部 */
 .artical-header {
+    /* 使用弹性布局 */
     display: flex;
+    /* 底部边框 */
     border-bottom: 1px solid grey;
+    /* 外边距，上下0，左右10px */
     margin: 0 10px;
+    /* 垂直居中 */
     align-items: center;
 }
 
 /* 文章类型 */
 .artical-type {
+    /* 背景颜色 */
     background-color: #38f87836;
+    /* 边框样式 */
     border: 3px solid rgb(112, 237, 81);
+    /* 边框圆角 */
     border-radius: 20px;
+    /* 内边距 */
     padding: 5px;
+    /* 字体大小 */
     font-size: small;
+    /* 字体粗细 */
     font-weight: 500;
+    /* 字体颜色 */
     color: rgb(36, 37, 37);
 }
 
 /* 文章标题 */
 .artical-title {
+    /* 字体大小 */
     color: #141b1f;
+    /* 外边距 */
     margin: 10px ;
+    /* 左内边距 */
     padding-left: 5px;
+    /* 左边框作为分割线 */
     border-left: 1px solid black;
 }
 
 /* 文章的部分内容 */
 .artical-content {
+    /* 外边距 */
     margin: 10px;
 }
 .artical-content p {
+    /* 字体颜色 */
     color: #6b7980;
-        /* 必须是 block 或 inline-block */
+    /* ======多行文本溢出省略号======  begin*/
+    /* 必须是 block 或 inline-block */
     display: -webkit-box;
     /* 限制显示的行数 */
     -webkit-line-clamp: 6; 
@@ -109,16 +375,278 @@ body {
     /* 隐藏溢出部分并显示省略号 */
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 140px;
+    /* ======多行文本溢出省略号======  end*/
+    /* 高度限制 */
+    /* height: 140px; */
 }
 
-/* 文章图片 */
+/* 文章信息 */
+.artical-footer {
+    /* 文本对齐方式 */
+    text-align: right;
+    /* 下外边距 */
+    margin-top: 5px;
+}
+
+.artical-create-time {
+    /* 背景颜色 */
+    background-color: #38f87836;
+}
+
+
+/* 图片区域 */
 .artical-pictures {
-    flex: 2;
-    background-color: #4db4f4;
-    margin: 10px 10px 10px 0;
-    border-radius: 0 10px 10px 0;
-}
-.artical-pictures img {
+    /* 宽度占2/8 */
+    flex: 3;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
+    /* 背景颜色 */
+    background-color: #4db4f448;
+    /* 外边距 */
+    margin: 10px 10px 10px 0;
+    /* 边框圆角 */
+    border-radius: 0 10px 10px 0;
+    /* 边框样式 */
+    border: 1px solid #38f878;
 }
+
+/* 文章的图片样式——网格布局 */
+.grid-artical-pictures {
+    /* 网格布局 */
+    display: grid !important; 
+    /* 默认 3 列 (适用于 2, 3, 5-9 张图) */
+    grid-template-columns: repeat(3, 1fr);
+    /* 间距 */
+    gap: 2px;
+    /* 宽度 */
+    width: 100%;
+    padding: 5px;
+}
+
+/* --- 特殊处理：1张图 --- */
+/* 当只有一个 grid-item 时 */
+.grid-artical-pictures:has(.grid-item:only-child) {
+    grid-template-columns: 1fr; 
+}
+.grid-artical-pictures .grid-item:only-child {
+    width: 100%;            
+    aspect-ratio: 1/1;    
+}
+
+/* 如果刚好4张图，实现2*2布局 */
+.grid-artical-pictures:has(.grid-item:nth-child(4):last-child) {
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%; 
+}
+
+/* 文章的图片样式 */
+.grid-artical-pictures .grid-item {
+    /* 强制保持 1:1 的宽高比 */
+    aspect-ratio: 1/1;
+    /* 超出部分隐藏 */
+    overflow: hidden;
+}
+
+/* 文章的图片样式——单张图片 */
+.grid-artical-pictures .grid-item img {
+    width: 100%;
+    height: 100%;
+    /* 裁切图片以填充正方形，不拉伸 */
+    object-fit: cover;
+}
+
+/* ======================================右侧边栏==================================== */
+/* 右侧边栏 */
+.right-sidebar {
+    /* 弹性布局占比 */
+    flex: 2;
+    /* 弹性布局 */
+    display: flex;
+    /* 主轴方向 */
+    flex-direction: column;
+    /* 外边距 */
+    margin: 0 5px;
+}
+/* ================右侧个人介绍=================== */
+/* 个人介绍 */
+.about {
+    flex: 1;
+    /* 过渡样式 */
+    transition: all .5s ease-in-out;
+}
+.about:hover {
+    /* 目录阴影 */
+    box-shadow: 5px 5px 5px rgb(255, 1, 1);
+    /* 变换 */
+    transform: translate(-10px,2px);
+    /* 层级 */
+    z-index: 100;
+}
+
+/* 板块名称 */
+.about-title {
+    /* 文本对齐方式 */
+    text-align: center;
+    /* 背景颜色 */
+    background-color: #e9c6c6;
+}
+
+/* 头像 */
+.about-avatar {
+    /* 弹性布局 */
+    display: flex;
+    /* 居中 */
+    justify-content: center;
+}
+.about-avatar img{
+    /* 保持宽高比 */
+    aspect-ratio: 1/1;
+    /* 宽度 */
+    width: 150px;
+    /* 高度 */
+    /* 图片填充 */
+    object-fit: cover;
+    /* 圆角 */
+    object-fit: cover;
+    /* 边框 */
+    border: 3px solid #3858f8;
+    /* 边框圆形 */
+    border-radius: 50%;
+    /* 外边距 */
+    margin: 20px auto;
+}
+
+/* 个人标签 */
+.about-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tag {
+    margin: 0 5px 10px 0;
+    padding: 1px 2px;
+    border: 2px solid #383ef8;
+    border-radius: 10px;
+    background-color: #b2dbf6b4;
+    font-size: small;
+}
+
+/* ================右下角留言=================== */
+/* 右下角留言 */
+.message {
+    /* 弹性布局占比 */
+    flex: 1;
+    /* 过渡样式 */
+    transition: all .5s ease-in-out;
+}
+.message:hover {
+    /* 目录阴影 */
+    box-shadow: 5px 5px 5px rgb(0, 255, 238);
+    /* 变换 */
+    transform: translate(-10px,2px);
+    /* 层级 */
+    z-index: 100;
+}
+
+/* 留言板块名称 */
+.message-title {
+    /* 文本对齐方式 */
+    text-align: center;
+    /* 背景颜色 */
+    background-color: #4db4f43b;
+    /* 外边距 */
+    margin: 10px 0;
+}
+
+/* 留言展示块 */
+.message-contents {
+    /* 背景颜色 */
+    background-color: #ffffff56;
+    /* 滚动条 */
+    overflow-y: scroll;
+    /* 高度 */
+    height: 230px;
+}
+
+/* 留言条 */
+.message-item {
+    /* 弹性布局 */
+    display: flex;
+    /* 外边距 */
+    margin: 10px 2px;
+    /* 内边距 */
+    padding: 2px 3px;
+    /* 高度 */
+    height: 45px;
+}
+
+/* 头像 */
+.message-avatar {
+    /* 弹性布局 */
+    display: flex;
+    /* 水平居中 */
+    justify-content: start;
+    /* 垂直居中 */
+    align-items: center;
+    /* 边框 */
+    border: 2px solid #3858f8;
+    /* 取消右边框 */
+    border-right: 0;
+    /* 边框圆角 */
+    border-radius: 50% 0 0 50%;
+}
+.message-avatar img{
+    /* 保持宽高比 */
+    aspect-ratio: 1/1;
+    /* 宽度 */
+    width: 40px;
+    /* 高度 */
+    height: 40px;
+    /* 图片填充 */
+    object-fit: cover;
+    /* 圆角 */
+    object-fit: cover;
+    /* 边框 */
+    border: 2px solid #3858f8;
+    /* 边框圆形 */
+    border-radius: 50%;
+}
+
+/* 留言内容 */
+.message-text {
+    /* 字体大小 */
+    font-size: small;
+    /* 边框 */
+    border: 2px solid #3858f8;
+    /* 取消左边框 */
+    border-left: 0;
+}
+
+/* =====================================网页底部========================== */
+.footer {
+    /* 定位方式 */
+    position: absolute;
+    /* 距离底部 */
+    bottom: 0;
+    /* 宽度占满屏幕 */
+    width: 100%;
+    /* 高度 */
+    height: 35px;
+    /* 背景颜色 */
+    background-color: #383ef875;
+    /* 文本对齐方式 */
+    text-align: center;
+    /* 字体颜色 */
+    color: #fff;
+}
+
+/* 底部 */
+.footer p {
+    /* 行高 */
+    line-height: 35px;
+}
+
